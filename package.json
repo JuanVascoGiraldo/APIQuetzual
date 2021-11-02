@@ -1,0 +1,23 @@
+{
+  "name": "apiquetzual",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node ./src/index.js "
+  },
+  "keywords": [],
+  "author": "",
+  "engines": {
+    "node": "16.9.1"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
+  }
+}
