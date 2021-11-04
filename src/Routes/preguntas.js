@@ -93,7 +93,6 @@ router.post('/Usuario/Preguntas', (req, res)=>{
             mysqlConnection.query(query, [id_usu, estado], (err, rows) =>{
                 if(!err){
                     mysqlConnection.destroy();
-                    console.table(rows);
                     res.json({
                         'status': 'Encontradas',
                         'datos': rows
@@ -109,7 +108,6 @@ router.post('/Usuario/Preguntas', (req, res)=>{
             mysqlConnection.query(query, [id_usu, estado], (err, rows) =>{
                 if(!err){
                     mysqlConnection.destroy();
-                    console.table(rows);
                     res.json({
                         'status': 'Encontradas',
                         'datos': rows
@@ -207,8 +205,8 @@ router.post('/Similares', (req, res)=>{
                 const espacio = " ";
                 var premi = pre.toLowerCase();
                 const arrayDeCadenas = premi.split(espacio);
-                var cont = 0;
                 for(var ij=0; ij<rows.length;ij++){
+                    var cont = 0;
                     var des =  rows[ij].des_pre;
                     var desmi= des.toLowerCase();
                     const arrayDeRespuestas =desmi.split(espacio);
@@ -223,9 +221,11 @@ router.post('/Similares', (req, res)=>{
                     var porcentaje = cont / arrayDeCadenas.length;
                     porcentaje *= 100;
                     if (porcentaje > 49) {
+                        console.log("miau")
                        similares.push(rows[ij]);
                     }
                 }
+                console.table(similares)
                 res.json({
                     'status': 'Encontradas',
                     'datos': similares
