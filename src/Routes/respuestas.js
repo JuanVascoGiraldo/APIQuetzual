@@ -26,13 +26,13 @@ function conectar(){
 
 
 router.post('/Pregunta/Rechazar', (req, res)=>{
-    const{id_pre, id_doc, fecha, razon, pregunta, clave } = req.body;
+    const{id_pre, id_doc, fecha, razon, clave } = req.body;
     if(clave == clavedoc){
         var mysqlConnection = conectar();
-        const query = 'update mpregunta set des_pre = ? , id_estado = ? where id_pre = ?';
-        mysqlConnection.query(query, [pregunta, 3, id_pre], (err, rows)=>{
+        const query = 'update mpregunta set id_estado = ? where id_pre = ?  and id_estado = 1';
+        mysqlConnection.query(query, [ 3, id_pre], (err, rows)=>{
             if(!err){
-                const query2 = 'insert into mpregunta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (?, ?, ?, ?, ?)';
+                const query2 = 'insert into mrespuesta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (?, ?, ?, ?, ?)';
                 mysqlConnection.query(query2, [id_pre, razon, fecha, 6, id_doc], (_err, _rows)=>{
                     if(!_err){
                         mysqlConnection.destroy();
@@ -72,7 +72,7 @@ router.post('/Cantidad/Respuesta', (req, res)=>{
         }
     });
 });
-
+/*
 router.post('/Promedio/Respuestas', (req, res)=>{
     const {id} = req.body;
     var mysqlConnection = conexion();
@@ -90,7 +90,7 @@ router.post('/Promedio/Respuestas', (req, res)=>{
             res.json({'status': '¡ERROR!'});
         }
     });
-});
+});*/
 
 router.post('/Historico/Doctor', (req, res)=>{
     const {id, clave} = req.body;
@@ -117,11 +117,12 @@ router.post('/Historico/Doctor', (req, res)=>{
 
 router.post('/Pregunta/Responder', (req, res)=>{
     const{id_pre, id_doc, fecha, respuesta, pregunta, clave, categoria , puntos} = req.body;
-    if(clave == clavedoc){
-        const query = 'update mpregunta set des_pre = ? , id_estado = ? where id_pre = ?';
+    if(clave == clavedoc && categoria < 6){
+        var mysqlConnection = conectar();
+        const query = 'update mpregunta set des_pre = ? , id_estado = ? where id_pre = ?  and id_estado = 1';
         mysqlConnection.query(query, [pregunta, 2, id_pre], (err, rows)=>{
             if(!err){
-                const query2 = 'insert into mpregunta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (?, ?, ?, ?, ?)';
+                const query2 = 'insert into mrespuesta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (?, ?, ?, ?, ?)';
                 mysqlConnection.query(query2, [id_pre, respuesta, fecha, categoria, id_doc], (_err, _rows)=>{
                     if(!_err){
                         var str = fecha.split("/");
@@ -566,13 +567,14 @@ router.post('/Consultar/Respuestas', (req, res)=>{
     const{clave, id_pre} = req.body;
     if(clave == clavedoc || clave == claveusu){
         var mysqlConnection = conectar();
-        const query = 'select mrespuesta.id_res, mrespuesta.des_res, mrespuesta.id_cat, mrespuesta.fecha_res, musuario.nom_usu from mrespuesta INNER JOIN eusuario ON mrespuesta.id_usures = euasuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mrespuesta.id_pre = ? AND mrespuesta.id_cat <6 ';
+        const query = 'select mrespuesta.id_res, mrespuesta.des_res, mrespuesta.id_cat, mrespuesta.fecha_res, musuario.nom_usu from mrespuesta INNER JOIN eusuario ON mrespuesta.id_usures = eusuario.id_EnUsuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mrespuesta.id_pre = ? AND mrespuesta.id_cat <6 ';
         mysqlConnection.query(query, id_pre, (err, rows)=>{
             if(!err){
                 mysqlConnection.destroy();
-                    res.json({
-                        'status': 'Encontrados',
-                        'datos': rows
+                console.table(rows);
+                res.json({
+                    'status': 'Encontrados',
+                    'datos': rows
                 });
             }else{
                 mysqlConnection.destroy();

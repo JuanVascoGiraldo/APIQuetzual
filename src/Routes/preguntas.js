@@ -89,10 +89,11 @@ router.post('/Usuario/Preguntas', (req, res)=>{
     if(clave == claveusu){
         var mysqlConnection = conectar();
         if(estado == 3){
-            const query = 'select mpregunta.id_pre , mpregunta.des_pre , mpregunta.fecha_pre , mrespuesta.des_res, mrespuesta.fecha_res , musuario.nom_usu from mpregunta INNER JOIN mrespuesta ON mpregunta.id_pre = mrespuesta.id_pre INNER JOIN eusuario ON mrespuesta.id_usures = eusuario.id_enusuario INNER JOIN musuario eusuario.id_usu = musuario.id_usu where mpregunta.id_usup = ? AND mpregunta.id_estado = ?';
+            const query = 'select mpregunta.des_pre , mpregunta.fecha_pre , mrespuesta.des_res, mrespuesta.fecha_res  from mpregunta INNER JOIN mrespuesta ON mpregunta.id_pre = mrespuesta.id_pre where mpregunta.id_usup = ? AND mpregunta.id_estado = ? ';
             mysqlConnection.query(query, [id_usu, estado], (err, rows) =>{
                 if(!err){
                     mysqlConnection.destroy();
+                    console.table(rows);
                     res.json({
                         'status': 'Encontradas',
                         'datos': rows
@@ -156,6 +157,7 @@ router.post('/Pendientes', (req, res)=>{
         mysqlConnection.query(query, (err, rows)=>{
             if(!err){
                 mysqlConnection.destroy();
+                console.table(rows)
                     res.json({
                         'status': 'Encontradas',
                         'datos': rows
@@ -175,8 +177,8 @@ router.post('/Consultar/Pregunta', (req, res)=>{
     const{clave, id_pre} = req.body;
     if(clave == clavedoc || clave == claveusu){
         var mysqlConnection = conectar();
-        const query = 'select * from mpregunta where id_pre = ?';
-        mysqlConnection.query(query, id_pre, (err, rows)=>{
+        const query = 'select * from mpregunta where id_pre = ? and id_estado = ?';
+        mysqlConnection.query(query, [id_pre, 1], (err, rows)=>{
             if(!err){
                 mysqlConnection.destroy();
                     res.json({
@@ -205,6 +207,7 @@ router.post('/Similares', (req, res)=>{
                 const espacio = " ";
                 var premi = pre.toLowerCase();
                 const arrayDeCadenas = premi.split(espacio);
+                var cont = 0;
                 for(var ij=0; ij<rows.length;ij++){
                     var des =  rows[ij].des_pre;
                     var desmi= des.toLowerCase();
@@ -219,7 +222,6 @@ router.post('/Similares', (req, res)=>{
                     }
                     var porcentaje = cont / arrayDeCadenas.length;
                     porcentaje *= 100;
-                    cont = 0;
                     if (porcentaje > 49) {
                        similares.push(rows[ij]);
                     }

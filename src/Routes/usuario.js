@@ -438,8 +438,8 @@ router.post('/Consultar/Doctor', (req, res)=>{
     const{clave, id} = req.body;
     if(clave == claveadmin ){
         var mysqlConnection = conectar();
-        const query = 'select * from musuario where id_usu = ?';
-        mysqlConnection.query(query, [id], (err, rows)=>{
+        const query = 'select * from musuario where id_usu = ? and id_rol = ?';
+        mysqlConnection.query(query, [id, 2], (err, rows)=>{
             if(!err){
                 mysqlConnection.destroy();
                 res.json({
