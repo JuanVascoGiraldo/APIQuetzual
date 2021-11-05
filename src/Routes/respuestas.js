@@ -188,8 +188,8 @@ router.post('/Responder/Pregunta/Respondida', (req, res)=>{
             if(!err){
                 if(rows.length > 0){
                     var cat = rows[0].id_cat;
-                    const query2 = 'insert into mrespuesta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (? , ? , ?, ?)';
-                    mysqlConnection(query2, [id_pre, respuesta, fecha, cat, id_doc], (_err,_rows)=>{
+                    const query2 = 'insert into mrespuesta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (? , ? , ?, ?, ?)';
+                    mysqlConnection.query(query2, [id_pre, respuesta, fecha, cat, id_doc], (_err,_rows)=>{
                         if(!_err){
                             var str = fecha.split("/");
                             var meses = str[1] +'/'+ str[2];
@@ -567,7 +567,7 @@ router.post('/Consultar/Respuestas', (req, res)=>{
     const{clave, id_pre} = req.body;
     if(clave == clavedoc || clave == claveusu){
         var mysqlConnection = conectar();
-        const query = 'select mrespuesta.id_res, mrespuesta.des_res, mrespuesta.id_cat, mrespuesta.fecha_res, musuario.nom_usu from mrespuesta INNER JOIN eusuario ON mrespuesta.id_usures = eusuario.id_EnUsuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mrespuesta.id_pre = ? AND mrespuesta.id_cat <6 ';
+        const query = 'select mrespuesta.id_res, mrespuesta.des_res, mrespuesta.id_cat, mrespuesta.fecha_res, musuario.nom_usu, musuario.id_usu from mrespuesta INNER JOIN eusuario ON mrespuesta.id_usures = eusuario.id_EnUsuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mrespuesta.id_pre = ? AND mrespuesta.id_cat <6 ';
         mysqlConnection.query(query, id_pre, (err, rows)=>{
             if(!err){
                 mysqlConnection.destroy();
