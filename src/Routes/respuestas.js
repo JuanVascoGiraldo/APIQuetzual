@@ -72,10 +72,10 @@ router.post('/Cantidad/Respuesta', (req, res)=>{
         }
     });
 });
-/*
+
 router.post('/Promedio/Respuestas', (req, res)=>{
     const {id} = req.body;
-    var mysqlConnection = conexion();
+    var mysqlConnection = conectar();
     const query = 'select cal from dcalires where id_res = ?';
     mysqlConnection.query(query, id, (err, rows)=>{
         if(!err){
@@ -90,13 +90,13 @@ router.post('/Promedio/Respuestas', (req, res)=>{
             res.json({'status': '¡ERROR!'});
         }
     });
-});*/
+});
 
 router.post('/Historico/Doctor', (req, res)=>{
     const {id, clave} = req.body;
-    if(clave == clavedoc && clave ==  claveadmin){
+    if(clave == clavedoc || clave ==  claveadmin){
         var mysqlConnection = conectar();
-        const query = 'select mpregunta.id_pre, mpregunta.id_estado, mpregunta.despre, mpregunta.fecha_pre, mrespuesta.id_res, mrespuesta.des_res, mrespuesta.fecha_res, musuario.fecha_nac from mrespuesta INNER JOIN mpregunta ON mrespuesta.id_pre = mpregunta.id_pre INNER JOIN eusuario ON mpregunta.id_usup = euasuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mrespuesta.id_usures = ?';
+        const query = 'select mpregunta.id_pre, mpregunta.id_estado, mpregunta.des_pre, mpregunta.fecha_pre, mrespuesta.id_res, mrespuesta.des_res, mrespuesta.id_cat, mrespuesta.fecha_res, musuario.fecha_nac from mrespuesta INNER JOIN mpregunta ON mrespuesta.id_pre = mpregunta.id_pre INNER JOIN eusuario ON mpregunta.id_usup = eusuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mrespuesta.id_usures = ?';
         mysqlConnection.query(query, id, (err, rows)=>{
             if(!err){
                 mysqlConnection.destroy();

@@ -236,8 +236,8 @@ router.post('/Eliminar/Estudiante', (req, res) =>{
     const{id, clave, rol} = req.body;
     if(rol == 1 && clave == claveusu){
         var mysqlConnection = conectar();
-        const query = "update musuario set habilitada = ? , nom_usu = ? , email_usu = ? , where id_usu = ? ";
-        mysqlConnection.query(query, [0,'Usuario Elimado', 'Usuario Eliminado', id ], (err, rows, fields) =>{
+        const query = "update musuario set habilitada = ? , nom_usu = ? , email_usu = ? where id_usu = ? and id_rol = ? ";
+        mysqlConnection.query(query, [0,'Usuario Elimado', 'Usuario Eliminado', id , 1], (err, rows, fields) =>{
             if(!err){
                 mysqlConnection.destroy();
                 res.json({'status': 'Cuenta Eliminada'});
@@ -274,12 +274,34 @@ router.post('/Obtener/Doctores' , (req, res) => {
     }
 });
 
+router.post('/Obtener/Doctores/rank' , (req, res) => {
+    const {clave} = req.body;
+    if(clave == claveadmin || clave == clavedoc){
+        var mysqlConnection = conectar();
+        const query = "select nom_usu, id_usu from musuario where id_rol = ? ";
+        mysqlConnection.query(query, [2], (err, rows, field)=>{
+            if(!err){
+                mysqlConnection.destroy();
+                res.json({
+                    'status': 'Encontrados',
+                    'datos': rows });
+            }else{
+                mysqlConnection.destroy();
+                console.error(err);
+                res.json({'status': '¡ERROR!'})
+            }
+        });
+    }else{
+        res.json({'status': '¡ERROR!'})
+    }
+});
+
 router.post('/Deshabilitar/Doctor', (req, res) =>{
     const {clave, id} = req.body;
     if(clave == claveadmin){
-        var mysqlConnection = conexion();
-        const query = 'update musuario set habilitada = ? where id_usu = ?';
-        mysqlConnection.query(query, [0, id], (err, rows, fields)=>{
+        var mysqlConnection = conectar();
+        const query = 'update musuario set habilitada = ?, email_usu = ?where id_usu = ? and id_rol = ?';
+        mysqlConnection.query(query, [0, "Doctor Deshabilitado" , id, 2], (err, rows, fields)=>{
             if(!err){
                 mysqlConnection.destroy();
                 res.json({'status': 'Cuenta Deshabilitada'})
@@ -296,7 +318,7 @@ router.post('/Deshabilitar/Doctor', (req, res) =>{
 
 router.post('/Progreso/General', (req, res) => {
     const {clave} = req.body;
-    if(clave == claveadmin && clave == clavedoc){
+    if(clave == claveadmin || clave == clavedoc){
         var mysqlConnection  = conectar();
         const query = "Select dcalires.cal , mrespuesta.id_cat from dcalires INNER JOIN MRespuesta ON dcalires.id_res = mrespuesta.id_res";
         mysqlConnection.query(query, (err, rows)=>{
@@ -337,6 +359,7 @@ router.post('/Progreso/Usuario/Calificaciones', (req, res) => {
         res.json({'status': '¡ERROR!'})
     }
 });
+
 
 router.post('/Progreso/Estudiante/Preguntas', (req, res)=>{
     const {clave, id} = req.body;
@@ -386,7 +409,7 @@ router.post('/Ranking/Historico', (req, res)=>{
                 if(rows.length > 0){
                     var total = 0;
                     for(var i = 0; i<rows.length ; i++){
-                        total += rows[i].cant ;
+                        total += parseInt(rows[i].cant_punt) ;
                     }
                     mysqlConnection.destroy();
                     res.json({
@@ -415,10 +438,12 @@ router.post('/Ranking/Mensual', (req, res)=>{
     const{clave, mes} = req.body;
     if(clave == claveadmin || clave == clavedoc){
         var mysqlConnection = conectar();
-        const query = 'select musurio.nom_usu, puntos.cant_punt from EUsuario INNER JOIN MUsuario ON Eusuario.id_usu = musuario.id_usu INNER JOIN Puntos ON puntos.id_usudoc = eusuario.id_EnUsuario where Puntos.mes_punt = ? order by puntos.cant_punt desc';
+        console.log(mes)
+        const query = 'select musuario.nom_usu, puntos.cant_punt from EUsuario INNER JOIN MUsuario ON Eusuario.id_usu = musuario.id_usu INNER JOIN Puntos ON puntos.id_usudoc = eusuario.id_EnUsuario where Puntos.mes_punt = ? order by puntos.cant_punt desc';
         mysqlConnection.query(query, [mes], (err, rows)=>{
             if(!err){
                 mysqlConnection.destroy();
+                console.table(rows)
                 res.json({
                     'status': 'Encontradas',
                     'datos': rows
@@ -456,5 +481,7 @@ router.post('/Consultar/Doctor', (req, res)=>{
         res.json({'status': '¡ERROR!'})
     }
 });
+
+
 
 module.exports = router;

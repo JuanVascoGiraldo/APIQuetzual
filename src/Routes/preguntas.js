@@ -128,7 +128,7 @@ router.post('/Respondidas/Actuales', (req, res)=>{
     const {Clave} = req.body;
     if(Clave == claveusu || Clave == clavedoc){
         var mysqlConnection = conectar();
-        const query = 'select mpregunta.id_pre, mpregunta.des_pre, mpregunta.fecha_pre, musuario.fecha_nac from mpregunta INNER JOIN eusuario ON mpregunta.id_usup = eusuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mpregunta.id_estado = ?';
+        const query = 'select mpregunta.id_pre, mpregunta.des_pre, mpregunta.fecha_pre, musuario.fecha_nac from mpregunta INNER JOIN eusuario ON mpregunta.id_usup = eusuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mpregunta.id_estado = ? ORDER BY mpregunta.id_pre DESC';
         mysqlConnection.query(query, 2, (err, rows)=>{
             if(!err){
                     mysqlConnection.destroy();
