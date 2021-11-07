@@ -587,4 +587,36 @@ router.post('/Consultar/Respuestas', (req, res)=>{
     }
 });
 
+router.post('/Calificada/Respuesta', (req, res)=>{
+    const{clave, usu, resp} = req.body;
+    if(clave == claveusu){
+        var mysqlConnection = conectar();
+        const query = "select cal from dcalires where id_res = ? and id_usuc = ?";
+        mysqlConnection.query(query, [resp, usu], (err, rows)=>{
+            if(!err){
+                if(rows.length > 0){
+                    mysqlConnection.destroy();
+                    res.json({
+                        'status': 'Encontrada',
+                        'cal': rows[0].cal
+                    });
+                }else{
+                    mysqlConnection.destroy();
+                    res.json({
+                        'status': 'Encontrada',
+                        'cal': 0
+                    });
+                }
+            }else{
+                mysqlConnection.destroy();
+                console.error(err);
+                res.json({'status': '¡ERROR!'});
+            }
+        }); 
+
+    }else{
+        res.json({'status': '¡ERROR!'})
+    }
+});
+
 module.exports = router;
