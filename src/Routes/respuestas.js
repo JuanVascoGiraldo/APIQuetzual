@@ -7,10 +7,10 @@ var claveadmin = "72eV)'xL9}:NQ999X(MUFa$MTw]$zz;w";
 
 function conectar(){
     const mysqlConnection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: '03042021',
-        database: 'bdquetzual',
+        host: 'us-cdbr-east-04.cleardb.com',
+        user: 'bccc6e7e3e0a21',
+        password: 'cf44cb38',
+        database: 'heroku_9a7f2eb6bc77061',
         multipleStatements: true
         });
     mysqlConnection.connect(function (err) {
@@ -251,7 +251,6 @@ router.post('/Responder/Pregunta/Respondida', (req, res)=>{
 
 router.post('/Calificar/Respuesta/Usuario', (req, res)=>{
     const {usu, calif, resp} = req.body;
-    console.table({usu, calif, resp})
     var mysqlConnection = conectar();
     const query = 'select * from dcalires where id_usuc = ? and id_res = ?';
     mysqlConnection.query(query,[usu, resp], (err, rows)=>{
@@ -416,7 +415,7 @@ router.post('/Calificar/Respuesta/Usuario', (req, res)=>{
                                 if(rows_.length > 10){
                                     var total = 0;
                                     for(var i=0 ; i<rows_.length; i++){
-                                        total += rows_[0].cal;
+                                        total += rows_[i].cal;
                                     }
                                     var promedio = total / rows_.length;
                                     if(promedio < 3){

@@ -7,10 +7,10 @@ var claveadmin = "72eV)'xL9}:NQ999X(MUFa$MTw]$zz;w";
 
 function conectar(){
     const mysqlConnection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: '03042021',
-        database: 'bdquetzual',
+        host: 'us-cdbr-east-04.cleardb.com',
+        user: 'bccc6e7e3e0a21',
+        password: 'cf44cb38',
+        database: 'heroku_9a7f2eb6bc77061',
         multipleStatements: true
         });
     mysqlConnection.connect(function (err) {
