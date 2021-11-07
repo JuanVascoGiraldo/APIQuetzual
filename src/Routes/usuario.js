@@ -300,7 +300,7 @@ router.post('/Deshabilitar/Doctor', (req, res) =>{
     const {clave, id} = req.body;
     if(clave == claveadmin){
         var mysqlConnection = conectar();
-        const query = 'update musuario set habilitada = ?, email_usu = ?where id_usu = ? and id_rol = ?';
+        const query = 'update musuario set habilitada = ?, email_usu = ? where id_usu = ? and id_rol = ?';
         mysqlConnection.query(query, [0, "Doctor Deshabilitado" , id, 2], (err, rows, fields)=>{
             if(!err){
                 mysqlConnection.destroy();

@@ -251,12 +251,13 @@ router.post('/Responder/Pregunta/Respondida', (req, res)=>{
 
 router.post('/Calificar/Respuesta/Usuario', (req, res)=>{
     const {usu, calif, resp} = req.body;
+    console.table({usu, calif, resp})
     var mysqlConnection = conectar();
     const query = 'select * from dcalires where id_usuc = ? and id_res = ?';
     mysqlConnection.query(query,[usu, resp], (err, rows)=>{
         if(!err){
             if(rows.length > 0){
-                var id = rows[0].id_calires;
+                var id = rows[0].id_CaliRes;
                 const query2 = 'update dcalires set cal = ? where id_calires = ?';
                 mysqlConnection.query(query2,[calif, id], (_err, _rows)=>{
                     if(!_err){
@@ -266,7 +267,7 @@ router.post('/Calificar/Respuesta/Usuario', (req, res)=>{
                                 if(rows_.length > 10){
                                     var total = 0;
                                     for(var i=0 ; i<rows_.length; i++){
-                                        total += rows_[0].cal;
+                                        total += rows_[i].cal;
                                     }
                                     var promedio = total / rows_.length;
                                     if(promedio < 3){
