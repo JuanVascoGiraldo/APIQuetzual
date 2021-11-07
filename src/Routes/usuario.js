@@ -41,7 +41,6 @@ router.post('/Registrar/Usuario/Estudiante',(req, res) => {
                                     var id= rowss[0].id_usu;
                                     mysqlConnection.query('insert into EUsuario (id_EnUsuario, id_usu) VALUES (?, ?)', [id, id],(errrr, _rows, _fields) =>{
                                         if(!errrr){
-                                            mysqlConnection.commit();
                                             mysqlConnection.destroy();
                                             res.json({'status': 'Se ha guardado el Usuario'});
                                         }else{
@@ -147,6 +146,7 @@ router.post("/Iniciar/Sesion/Validar", (req, res) =>{
     mysqlConnection.query(query, [correo, contra], (_error, _rowws, _fields) =>{
         if(!_error){
             if(_rowws.length > 0){
+                mysqlConnection.destroy();
                 res.json({
                     'status': 'Se ha iniciado Sesion',
                     'usuario': _rowws
