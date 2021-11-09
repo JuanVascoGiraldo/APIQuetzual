@@ -225,7 +225,7 @@ router.post('/Similares', (req, res)=>{
                        similares.push(rows[ij]);
                     }
                 }
-                console.table(similares)
+                mysqlConnection.destroy();
                 res.json({
                     'status': 'Encontradas',
                     'datos': similares
