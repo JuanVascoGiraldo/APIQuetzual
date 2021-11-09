@@ -262,7 +262,8 @@ router.post('/Obtener/Doctores' , (req, res) => {
                 mysqlConnection.destroy();
                 res.json({
                     'status': 'Encontrados',
-                    'datos': rows });
+                    'datos': rows 
+                });
             }else{
                 mysqlConnection.destroy();
                 console.error(err);
