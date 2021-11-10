@@ -17,9 +17,7 @@ function conectar(){
         if (err) {
           console.error(err);
           return;
-        } else {
-            console.log("Se concecto www");
-        }
+        } 
       });
     return mysqlConnection;
 }
@@ -155,7 +153,6 @@ router.post('/Pendientes', (req, res)=>{
         mysqlConnection.query(query, (err, rows)=>{
             if(!err){
                 mysqlConnection.destroy();
-                console.table(rows)
                     res.json({
                         'status': 'Encontradas',
                         'datos': rows
@@ -221,7 +218,6 @@ router.post('/Similares', (req, res)=>{
                     var porcentaje = cont / arrayDeCadenas.length;
                     porcentaje *= 100;
                     if (porcentaje > 49) {
-                        console.log("miau")
                        similares.push(rows[ij]);
                     }
                 }

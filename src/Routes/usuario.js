@@ -1,9 +1,11 @@
 const {Router} = require('express');
+const crypto = require('crypto-js');
 const router = Router();
 const mysql = require('mysql');
 var claveusu = 'As7cnuLSSGkw85A8SdrDJmqLHsSJAfqd';
 var clavedoc = 'S:sVw>SN?j75zcA#-q{YdZ_5#W{E=X2q';
 var claveadmin = "72eV)'xL9}:NQ999X(MUFa$MTw]$zz;w";
+const clavecifrado = "S~J?xm,:c7WU8HFz)K$a$N&[V:ez*EN#";
 
 function conectar(){
     const mysqlConnection = mysql.createConnection({
@@ -17,9 +19,7 @@ function conectar(){
         if (err) {
           console.error(err);
           return;
-        } else {
-            console.log("Se concecto www");
-        }
+        } 
       });
     return mysqlConnection;
 }
@@ -162,6 +162,38 @@ router.post("/Iniciar/Sesion/Validar", (req, res) =>{
         }
     });
 });
+
+
+router.post("/Iniciar/Sesion/Validar/Android", (req, res) =>{
+    const {correoo, contraa} = req.body;
+    
+    var correo = crypto.AES.encrypt(correoo, clavecifrado).toString();
+    var contra = crypto.AES.encrypt(contraa, clavecifrado).toString();
+    console.log(correo);
+    console.log(contra);
+    var  mysqlConnection = conectar();
+    const query = 'select * from musuario where email_usu = ? and contra_usu = ? and habilitada = 1';
+    mysqlConnection.query(query, [correo, contra], (_error, _rowws, _fields) =>{
+        if(!_error){
+            if(_rowws.length > 0){
+                mysqlConnection.destroy();
+                res.json({
+                    'status': 'Se ha iniciado Sesion',
+                    'usuario': _rowws
+                });
+            }else{
+                console.error(_error);
+                mysqlConnection.destroy();
+                res.json({'status': '¡ERRORR!'});
+            }
+        }else{
+            console.error(_error);
+            mysqlConnection.destroy();
+            res.json({'status': '¡ERROR!'});
+        }
+    });
+});
+
 
 
 router.post('/Modificar/Usuario', (req, res) => {
@@ -439,12 +471,10 @@ router.post('/Ranking/Mensual', (req, res)=>{
     const{clave, mes} = req.body;
     if(clave == claveadmin || clave == clavedoc){
         var mysqlConnection = conectar();
-        console.log(mes)
         const query = 'select musuario.nom_usu, puntos.cant_punt from EUsuario INNER JOIN MUsuario ON Eusuario.id_usu = musuario.id_usu INNER JOIN Puntos ON puntos.id_usudoc = eusuario.id_EnUsuario where Puntos.mes_punt = ? order by puntos.cant_punt desc';
         mysqlConnection.query(query, [mes], (err, rows)=>{
             if(!err){
                 mysqlConnection.destroy();
-                console.table(rows)
                 res.json({
                     'status': 'Encontradas',
                     'datos': rows

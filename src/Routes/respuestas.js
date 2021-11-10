@@ -17,9 +17,7 @@ function conectar(){
         if (err) {
           console.error(err);
           return;
-        } else {
-            console.log("Se concecto www");
-        }
+        } 
       });
     return mysqlConnection;
 }
@@ -571,7 +569,6 @@ router.post('/Consultar/Respuestas', (req, res)=>{
         mysqlConnection.query(query, id_pre, (err, rows)=>{
             if(!err){
                 mysqlConnection.destroy();
-                console.table(rows);
                 res.json({
                     'status': 'Encontrados',
                     'datos': rows
