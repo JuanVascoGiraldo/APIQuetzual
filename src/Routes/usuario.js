@@ -1,11 +1,11 @@
 const {Router} = require('express');
-const crypto = require('crypto-js');
 const router = Router();
 const mysql = require('mysql');
+const jwt = require('jsonwebtoken');
 var claveusu = 'As7cnuLSSGkw85A8SdrDJmqLHsSJAfqd';
 var clavedoc = 'S:sVw>SN?j75zcA#-q{YdZ_5#W{E=X2q';
 var claveadmin = "72eV)'xL9}:NQ999X(MUFa$MTw]$zz;w";
-const clavecifrado = "S~J?xm,:c7WU8HFz)K$a$N&[V:ez*EN#";
+const config = 'S~J?xm,:c7WU8HFz)K$a$N&[V:ez*EN#'
 
 function conectar(){
     const mysqlConnection = mysql.createConnection({
@@ -82,8 +82,14 @@ router.post('/Registrar/Usuario/Estudiante',(req, res) => {
   });
 
   router.post('/Registrar/Usuario/Doctor',(req, res) => {
-    const {Nombre, correo, contra, fecha, genero, Clave} = req.body;
-    if( Clave === claveadmin){
+    const {Nombre, correo, contra, fecha, genero, Clave, id} = req.body;
+    const token = req.headers["token"];
+    if(!token){
+        res.json({'status': '¡ERROR!'});
+    }else{
+        
+        const tokend = jwt.verify(token, config);
+    if( Clave === claveadmin && Clave === tokend.clave && id === tokend.id && tokend.id_rol == 3){
         var  mysqlConnection = conectar();
         const queryy= 'select * from musuario where email_usu = ?';
         mysqlConnection.query(queryy, correo, (_error, _rowws, _fields) =>{
@@ -134,8 +140,9 @@ router.post('/Registrar/Usuario/Estudiante',(req, res) => {
                 res.json({'status': '¡ERROR!'});
             }
         });
-    }else{
-        res.json({'status': '¡ERROR!'});
+        }else{
+            res.json({'status': '¡ERROR!'});
+        }
     }
   });
 
@@ -147,9 +154,26 @@ router.post("/Iniciar/Sesion/Validar", (req, res) =>{
         if(!_error){
             if(_rowws.length > 0){
                 mysqlConnection.destroy();
+                var claves = '';
+                if(_rowws[0].id_rol == 3){
+                    claves = claveadmin;
+                }else if(_rowws[0].id_rol == 2){
+                    claves = clavedoc;
+                }else{
+                    claves = claveusu;
+                }
+
+                const token = jwt.sign({
+                    clave: claves,
+                    id: _rowws[0].id_usu,
+                    id_rol: _rowws[0].id_rol
+                }, config, {
+                    expiresIn: 60 * 60 * 24
+                });
                 res.json({
                     'status': 'Se ha iniciado Sesion',
-                    'usuario': _rowws
+                    'usuario': _rowws,
+                    'token': token
                 });
             }else{
                 mysqlConnection.destroy();
@@ -161,40 +185,8 @@ router.post("/Iniciar/Sesion/Validar", (req, res) =>{
             res.json({'status': '¡ERROR!'});
         }
     });
+
 });
-
-
-router.post("/Iniciar/Sesion/Validar/Android", (req, res) =>{
-    const {correoo, contraa} = req.body;
-    
-    var correo = crypto.AES.encrypt(correoo, clavecifrado).toString();
-    var contra = crypto.AES.encrypt(contraa, clavecifrado).toString();
-    console.log(correo);
-    console.log(contra);
-    var  mysqlConnection = conectar();
-    const query = 'select * from musuario where email_usu = ? and contra_usu = ? and habilitada = 1';
-    mysqlConnection.query(query, [correo, contra], (_error, _rowws, _fields) =>{
-        if(!_error){
-            if(_rowws.length > 0){
-                mysqlConnection.destroy();
-                res.json({
-                    'status': 'Se ha iniciado Sesion',
-                    'usuario': _rowws
-                });
-            }else{
-                console.error(_error);
-                mysqlConnection.destroy();
-                res.json({'status': '¡ERRORR!'});
-            }
-        }else{
-            console.error(_error);
-            mysqlConnection.destroy();
-            res.json({'status': '¡ERROR!'});
-        }
-    });
-});
-
-
 
 router.post('/Modificar/Usuario', (req, res) => {
     const {id, correo, fecha, nombre, id_gen, clave, rol}= req.body;
