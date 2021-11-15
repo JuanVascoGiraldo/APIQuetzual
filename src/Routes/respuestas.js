@@ -9,15 +9,10 @@ const config = 'S~J?xm,:c7WU8HFz)K$a$N&[V:ez*EN#';
 
 function conectar(){
     const mysqlConnection = mysql.createConnection({
-        /*host: 'us-cdbr-east-04.cleardb.com',
+        host: 'us-cdbr-east-04.cleardb.com',
         user: 'bccc6e7e3e0a21',
         password: 'cf44cb38',
         database: 'heroku_9a7f2eb6bc77061',
-        multipleStatements: true*/
-        host: 'localhost',
-        user: 'root',
-        password: '03042021',
-        database: 'bdquetzual',
         multipleStatements: true
         });
     mysqlConnection.connect(function (err) {
@@ -82,7 +77,6 @@ router.post('/Cantidad/Respuesta', (req, res)=>{
             res.json({'status': '¡ERROR!'});
         }
     });
-    mysqlConnection.destroy();
 });
 
 router.post('/Promedio/Respuestas', (req, res)=>{
@@ -663,8 +657,7 @@ router.post('/Calificada/Respuesta', (req, res)=>{
                     console.error(err);
                     res.json({'status': '¡ERROR!'});
                 }
-            }); 
-            mysqlConnection.destroy();
+            });
         }else{
             res.json({'status': '¡ERROR!'})
         }
