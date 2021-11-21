@@ -298,7 +298,7 @@ router.post('/Calificar/Respuesta/Usuario', (req, res)=>{
                                 const query3 = 'select cal from dcalires where id_res = ?';
                                 mysqlConnection.query(query3, resp, (err_, rows_)=>{
                                     if(!err_){
-                                        if(rows_.length > 10){
+                                        if(rows_.length > 20){
                                             var total = 0;
                                             for(var i=0 ; i<rows_.length; i++){
                                                 total += rows_[i].cal;
@@ -447,7 +447,7 @@ router.post('/Calificar/Respuesta/Usuario', (req, res)=>{
                                 const query3 = 'select cal from dcalires where id_res = ?';
                                 mysqlConnection.query(query3, resp, (err_, rows_)=>{
                                     if(!err_){
-                                        if(rows_.length > 10){
+                                        if(rows_.length > 20){
                                             var total = 0;
                                             for(var i=0 ; i<rows_.length; i++){
                                                 total += rows_[i].cal;
