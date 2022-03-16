@@ -12,6 +12,7 @@ function conectar(){
         user: 'b40a0e1f44feaf',
         password: '57720767',
         database: 'heroku_5ed7b3c7ecc5858',
+        charset:  "utf-8",
         multipleStatements: true
         });
     mysqlConnection.connect(function (err) {
@@ -30,6 +31,11 @@ router.post('/Realizar/Pregunta', (req, res)=>{
     if(!token){
         res.json({'status': '¡ERROR!'});
     }else{
+        try{
+            const tokend = jwt.verify(token, config);
+        }catch(error){
+            res.json({'status': '¡ERROR!'});
+        }
         const tokend = jwt.verify(token, config);
         if(clave == claveusu && tokend.clave == claveusu && tokend.id == usu && tokend.id_rol == 1){
             var mysqlConnection = conectar();
@@ -57,6 +63,11 @@ router.post('/Modificar/Pregunta/Pendiente', (req, res) =>{
     if(!token){
         res.json({'status': '¡ERROR!'});
     }else{
+        try{
+            const tokend = jwt.verify(token, config);
+        }catch(error){
+            res.json({'status': '¡ERROR!'});
+        }
         const tokend = jwt.verify(token, config);
         if(clave == claveusu && tokend.id_rol == 1 && tokend.id == usu && tokend.clave == claveusu){
             var mysqlConnection = conectar();
@@ -84,6 +95,11 @@ router.post('/Eliminar/Pregunta', (req, res)=>{
     if(!token){
         res.json({'status': '¡ERROR!'});
     }else{
+        try{
+            const tokend = jwt.verify(token, config);
+        }catch(error){
+            res.json({'status': '¡ERROR!'});
+        }
         const tokend = jwt.verify(token, config);
         if(clave == claveusu && tokend.id_rol == 1 && tokend.id == id_usu && tokend.clave == claveusu){
             var mysqlConnection = conectar();
@@ -111,6 +127,11 @@ router.post('/Usuario/Preguntas', (req, res)=>{
     if(!token){
         res.json({'status': '¡ERROR!'});
     }else{
+        try{
+            const tokend = jwt.verify(token, config);
+        }catch(error){
+            res.json({'status': '¡ERROR!'});
+        }
         const tokend = jwt.verify(token, config);
         if(clave == claveusu && id_usu == tokend.id && 1 == tokend.id_rol){
            
@@ -154,23 +175,40 @@ router.post('/Usuario/Preguntas', (req, res)=>{
 
 
 router.post('/Respondidas/Actuales', (req, res)=>{
-    const {Clave} = req.body;
+    const {Clave, clasi} = req.body;
     if(Clave == claveusu || Clave == clavedoc){
         var mysqlConnection = conectar();
-        const query = 'select mpregunta.id_pre, mpregunta.des_pre, mpregunta.fecha_pre, musuario.fecha_nac from mpregunta INNER JOIN eusuario ON mpregunta.id_usup = eusuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mpregunta.id_estado = ? ORDER BY mpregunta.id_pre DESC';
-        mysqlConnection.query(query, 2, (err, rows)=>{
-            if(!err){
+        if(clasi == 0 || clasi == 6){
+            const query = 'select mpregunta.id_pre, mpregunta.des_pre, mpregunta.fecha_pre, musuario.fecha_nac from mpregunta INNER JOIN eusuario ON mpregunta.id_usup = eusuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mpregunta.id_estado = ? ORDER BY mpregunta.id_pre DESC';
+            mysqlConnection.query(query, 2, (err, rows)=>{
+                if(!err){
+                        mysqlConnection.destroy();
+                        res.json({
+                            'status': 'Encontrados',
+                            'datos': rows
+                    });
+                }else{
                     mysqlConnection.destroy();
-                    res.json({
-                        'status': 'Encontrados',
-                        'datos': rows
-                });
-            }else{
-                mysqlConnection.destroy();
-                console.error(err);
-                res.json({'status': '¡ERROR!'});
-            }
-        });
+                    console.error(err);
+                    res.json({'status': '¡ERROR!'});
+                }
+            });
+        }else if(clasi < 6 && clasi>0){
+            const query = 'select mpregunta.id_pre, mpregunta.des_pre, mpregunta.fecha_pre, musuario.fecha_nac from mpregunta INNER JOIN eusuario ON mpregunta.id_usup = eusuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mpregunta.id_estado = ? AND mrespuesta.id_cat = ? ORDER BY mpregunta.id_pre DESC';
+            mysqlConnection.query(query, [2, clasi], (err, rows)=>{
+                if(!err){
+                        mysqlConnection.destroy();
+                        res.json({
+                            'status': 'Encontrados',
+                            'datos': rows
+                    });
+                }else{
+                    mysqlConnection.destroy();
+                    console.error(err);
+                    res.json({'status': '¡ERROR!'});
+                }
+            });
+        }
     }else{
         res.json({'status': '¡ERROR!'})
     }
@@ -183,6 +221,11 @@ router.post('/Pendientes', (req, res)=>{
     if(!token){
         res.json({'status': '¡ERROR!'});
     }else{
+        try{
+            const tokend = jwt.verify(token, config);
+        }catch(error){
+            res.json({'status': '¡ERROR!'});
+        }
         const tokend = jwt.verify(token, config);
         if(clave == clavedoc && tokend.id_rol == 2 && tokend.clave == clavedoc){
             var mysqlConnection = conectar();

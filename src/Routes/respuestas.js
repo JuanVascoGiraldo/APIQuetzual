@@ -13,6 +13,7 @@ function conectar(){
         user: 'b40a0e1f44feaf',
         password: '57720767',
         database: 'heroku_5ed7b3c7ecc5858',
+        charset:  "utf-8",
         multipleStatements: true
         });
     mysqlConnection.connect(function (err) {
@@ -31,6 +32,11 @@ router.post('/Pregunta/Rechazar', (req, res)=>{
     if(!token){
         res.json({'status': '¡ERROR!'});
     }else{
+        try{
+            const tokend = jwt.verify(token, config);
+        }catch(error){
+            res.json({'status': '¡ERROR!'});
+        }
         const tokend = jwt.verify(token, config);
         if(clave == clavedoc && tokend.id_rol == 2 && tokend.clave == clavedoc && id_doc == tokend.id){
             var mysqlConnection = conectar();
@@ -105,6 +111,11 @@ router.post('/Historico/Doctor', (req, res)=>{
     if(!token){
         res.json({'status': '¡ERROR!'});
     }else{
+        try{
+            const tokend = jwt.verify(token, config);
+        }catch(error){
+            res.json({'status': '¡ERROR!'});
+        }
         const tokend = jwt.verify(token, config);
         if((clave == clavedoc && tokend.id == id && tokend.id_rol == 2 && tokend.clave == clavedoc )|| (clave ==  claveadmin && tokend.id_rol == 3 && tokend.clave == claveadmin )){
             var mysqlConnection = conectar();
@@ -135,6 +146,11 @@ router.post('/Pregunta/Responder', (req, res)=>{
     if(!token){
         res.json({'status': '¡ERROR!'});
     }else{
+        try{
+            const tokend = jwt.verify(token, config);
+        }catch(error){
+            res.json({'status': '¡ERROR!'});
+        }
         const tokend = jwt.verify(token, config);
         if(clave == clavedoc && categoria < 6 && tokend.clave == clavedoc && tokend.id == id_doc && tokend.id_rol == 2){
             var mysqlConnection = conectar();
@@ -206,6 +222,11 @@ router.post('/Responder/Pregunta/Respondida', (req, res)=>{
     if(!token){
         res.json({'status': '¡ERROR!'});
     }else{
+        try{
+            const tokend = jwt.verify(token, config);
+        }catch(error){
+            res.json({'status': '¡ERROR!'});
+        }
         const tokend = jwt.verify(token, config);
         if(clavedoc == clave && tokend.id == id_doc && tokend.id_rol == 2 && tokend.clave == clavedoc){
             var mysqlConnection = conectar();
@@ -284,6 +305,11 @@ router.post('/Calificar/Respuesta/Usuario', (req, res)=>{
     if(!token){
         res.json({'status': '¡ERROR!'});
     }else{
+        try{
+            const tokend = jwt.verify(token, config);
+        }catch(error){
+            res.json({'status': '¡ERROR!'});
+        }
         const tokend = jwt.verify(token, config);
         if(tokend.id == usu && tokend.id_rol == 1 && tokend.clave== claveusu){
             var mysqlConnection = conectar();
@@ -632,7 +658,11 @@ router.post('/Calificada/Respuesta', (req, res)=>{
     if(!token){
         res.json({'status': '¡ERROR!'});
     }else{
-
+        try{
+            const tokend = jwt.verify(token, config);
+        }catch(error){
+            res.json({'status': '¡ERROR!'});
+        }
         const tokend = jwt.verify(token, config);
         if(clave == claveusu && tokend.id == usu && tokend.id_rol ==1){
             var mysqlConnection = conectar();
