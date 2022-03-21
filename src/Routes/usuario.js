@@ -10,10 +10,10 @@ const config = 'S~J?xm,:c7WU8HFz)K$a$N&[V:ez*EN#';
 
 function conectar(){
     const mysqlConnection = mysql.createConnection({
-        host: 'us-cdbr-east-05.cleardb.net',
-        user: 'b40a0e1f44feaf',
-        password: '57720767',
-        database: 'heroku_5ed7b3c7ecc5858',
+        host: 'localhost',
+        user: 'root',
+        password: '03042021',
+        database: 'bdquetzual',
         charset:  "utf-8",
         multipleStatements: true
         });
@@ -78,7 +78,11 @@ router.post('/Registrar/Usuario/Estudiante',(req, res) => {
                                         mysqlConnection.query('insert into EUsuario (id_EnUsuario, id_usu) VALUES (?, ?)', [id, id],(errrr, _rows, _fields) =>{
                                             if(!errrr){
                                                 mysqlConnection.destroy();
-                                                res.json({'status': 'Se ha guardado el Usuario'});
+                                                res.json({
+                                                    'status': 'Se ha guardado el Usuario',
+                                                    'Correo': tokend.UCorreo,
+                                                    'Contra': tokend.UContra
+                                            });
                                             }else{
                                                 console.log(errrr);
                                                 mysqlConnection.destroy();
@@ -1042,7 +1046,7 @@ router.post('/Cambiar/Email', (req, res)=>{
             res.json({'status': '¡ERROR!'});
         }
         const tokend = jwt.verify(token, config);
-        if(tokend.clave == clave && clave == claveusu){
+        if(tokend.clave == clave && clave == claveusu && token.id == id){
             var mysqlConnection = conectar();
             const query = 'select * from musuario where email_usu = ?';
             mysqlConnection.query(query, newemail, (err, rows)=>{
@@ -1058,7 +1062,7 @@ router.post('/Cambiar/Email', (req, res)=>{
                         }, config, {
                             expiresIn: 60 * 30
                         });
-                        var link = "https://quetzual.herokuapp.com/ConfModiDoc?token="+token
+                        var link = "https://quetzual.herokuapp.com/ConfModi?token="+token
                         var cuerpo = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' +
                             '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" style="font-family:georgia, times, \'times new roman\', serif">' +
                             '<head>' +
@@ -1428,14 +1432,14 @@ router.post('/Recuperar/Password', (req, res)=>{
         const query2 = "update musuario set contra_usu = ? where id_usu = ? ";
         mysqlConnection.query(query2, [pass, tokend.UId], (_error, _rows, _fields) =>{
             if(!_error){
-                 mysqlConnection.destroy();
+                mysqlConnection.destroy();
                 res.json({'status': 'Cambio Guardado'})
             }else{
                 console.error(_error);
-                 mysqlConnection.destroy();
+                mysqlConnection.destroy();
                 res.json({'status': '¡ERROR!'})
-               }
-      });
+            }
+        });
     }
 });
 
