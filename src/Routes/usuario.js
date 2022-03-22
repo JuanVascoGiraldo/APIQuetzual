@@ -213,7 +213,7 @@ router.post('/Registrar/Token',(req, res) => {
                         '<td class="es-m-p0r es-m-p20b" valign="top" align="center" style="padding:0;Margin:0;width:560px">' +
                         '<table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">' +
                         '<tr>' +
-                        '<td align="center" style="padding:0;Margin:0;font-size:0px"><img src="https://i.ibb.co/XSzH4Cs/logotipo.png" alt="Logo" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;font-size:12px" height="100" title="Logo"></td>' +
+                        '<td align="center" style="padding:0;Margin:0;font-size:0px"><img src="https://i.ibb.co/wzX3bzX/Logo-Verde-Letras.png" alt="Logo" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;font-size:12px" height="150" title="Logo"></td>' +
                         '</tr>' +
                         '</table></td>' +
                         '</tr>' +
@@ -391,7 +391,7 @@ router.post('/Registrar/Usuario/Doctor',(req, res) => {
                                                 '<td align="center" valign="top" style="padding:0;Margin:0;width:560px">'+
                                                 '<table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">'+
                                                 '<tr>'+
-                                                '<td align="center" style="padding:0;Margin:0;font-size:0px"><img class="adapt-img" src="https://i.ibb.co/XSzH4Cs/logotipo.png" alt style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic" width="200"></td>'+
+                                                '<td align="center" style="padding:0;Margin:0;font-size:0px"><img class="adapt-img" src="https://i.ibb.co/wzX3bzX/Logo-Verde-Letras.png" alt style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic" width="150"></td>'+
                                                 '</tr>'+
                                                 '</table></td>'+
                                                 '</tr>'+
@@ -1135,7 +1135,7 @@ router.post('/Cambiar/Email', (req, res)=>{
                             '<td class="es-m-p0r es-m-p20b" valign="top" align="center" style="padding:0;Margin:0;width:560px">' +
                             '<table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">' +
                             '<tr>' +
-                            '<td align="center" style="padding:0;Margin:0;font-size:0px"><img src="https://i.ibb.co/XSzH4Cs/logotipo.png" alt="Logo" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;font-size:12px" height="100" title="Logo"></td>' +
+                            '<td align="center" style="padding:0;Margin:0;font-size:0px"><img src="https://i.ibb.co/wzX3bzX/Logo-Verde-Letras.png" alt="Logo" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;font-size:12px" height="150" title="Logo"></td>' +
                             '</tr>' +
                             '</table></td>' +
                             '</tr>' +
@@ -1338,7 +1338,7 @@ router.post('/Recuperar/Password/Token', (req, res)=>{
                 '<td class="es-m-p0r es-m-p20b" valign="top" align="center" style="padding:0;Margin:0;width:560px">'+
                 '<table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">'+
                 '<tr>'+
-                '<td align="center" style="padding:0;Margin:0;font-size:0px"><img src="https://i.ibb.co/XSzH4Cs/logotipo.png" alt="Logo" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;font-size:12px" height="100" title="Logo"></td>'+
+                '<td align="center" style="padding:0;Margin:0;font-size:0px"><img src="https://i.ibb.co/wzX3bzX/Logo-Verde-Letras.png" alt="Logo" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;font-size:12px" height="150" title="Logo"></td>'+
                 '</tr>'+
                 '</table></td>'+
                 '</tr>'+
