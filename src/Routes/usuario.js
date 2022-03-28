@@ -143,7 +143,6 @@ router.post('/Registrar/Token',(req, res) => {
                     }, config, {
                         expiresIn: 60 * 30
                     });
-                    mysqlConnection.destroy();
                     var link = dire +"Confirmar?token="+token
                     var cuerpo = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' +
                         '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" style="font-family:georgia, times, \'times new roman\', serif">' +
@@ -275,6 +274,7 @@ router.post('/Registrar/Token',(req, res) => {
                         '</body>' +
                         '</html>';
                     sendmail(enviar, "Registro", cuerpo);
+                    mysqlConnection.destroy();
                     res.json({'status':'Enviado'});
                 }else {
                     mysqlConnection.destroy();
