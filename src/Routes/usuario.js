@@ -8,6 +8,19 @@ var clavedoc = 'S:sVw>SN?j75zcA#-q{YdZ_5#W{E=X2q';
 var claveadmin = "72eV)'xL9}:NQ999X(MUFa$MTw]$zz;w";
 const config = 'S~J?xm,:c7WU8HFz)K$a$N&[V:ez*EN#';
 var dire = 'https://quetzual.herokuapp.com/'
+//var dire = 'http://localhost:8084/QuetzualWeb/'
+/*
+    host: 'us-cdbr-east-05.cleardb.net',
+    user: 'b5281614b1195e',
+    password: '1025be05',
+    database: 'heroku_3f56efd65cc9251',
+
+    host: 'localhost',
+    user: 'root',
+    password: '03042021',
+    database: 'bdquetzual',
+
+*/
 
 function conectar(){
     const mysqlConnection = mysql.createConnection({
@@ -1097,7 +1110,7 @@ router.post('/Cambiar/Email', (req, res)=>{
         }
         if(seguirrr){
             const tokend = jwt.verify(token, config);
-            if(tokend.clave == clave && clave == claveusu && token.id == id){
+            if(tokend.clave == clave && clave == claveusu && tokend.id == id){
                 var mysqlConnection = conectar();
                 const query = 'select * from musuario where email_usu = ?';
                 mysqlConnection.query(query, newemail, (err, rows)=>{
@@ -1247,6 +1260,7 @@ router.post('/Cambiar/Email', (req, res)=>{
                             res.json({'status':'Enviado'});
                         }
                     }else{
+                        
                         mysqlConnection.destroy();
                         console.error(err);
                         res.json({'status': '¡ERROR!'});
