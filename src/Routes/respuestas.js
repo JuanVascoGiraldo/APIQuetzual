@@ -9,10 +9,10 @@ const config = 'S~J?xm,:c7WU8HFz)K$a$N&[V:ez*EN#';
 
 function conectar(){
     const mysqlConnection = mysql.createConnection({
-        host: 'us-cdbr-east-05.cleardb.net',
-        user: 'b5281614b1195e',
-        password: '1025be05',
-        database: 'heroku_3f56efd65cc9251',
+        host: 'localhost',
+        user: 'root',
+        password: '03042021',
+        database: 'bdquetzual',
         multipleStatements: true,
         charset: 'UTF8_GENERAL_CI'
         });

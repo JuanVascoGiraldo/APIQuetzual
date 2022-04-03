@@ -8,10 +8,10 @@ const config = 'S~J?xm,:c7WU8HFz)K$a$N&[V:ez*EN#';
 
 function conectar(){
     const mysqlConnection = mysql.createConnection({
-        host: 'us-cdbr-east-05.cleardb.net',
-        user: 'b5281614b1195e',
-        password: '1025be05',
-        database: 'heroku_3f56efd65cc9251',
+        host: 'localhost',
+        user: 'root',
+        password: '03042021',
+        database: 'bdquetzual',
         multipleStatements: true,
         charset: 'UTF8_GENERAL_CI'
         });
@@ -191,40 +191,23 @@ router.post('/Usuario/Preguntas', (req, res)=>{
 
 
 router.post('/Respondidas/Actuales', (req, res)=>{
-    const {Clave, clasi} = req.body;
+    const {Clave} = req.body;
     if(Clave == claveusu || Clave == clavedoc){
         var mysqlConnection = conectar();
-        if(clasi == 0 || clasi >= 6){
-            const query = 'select mpregunta.id_pre, mpregunta.des_pre, mpregunta.fecha_pre, musuario.fecha_nac from mpregunta INNER JOIN eusuario ON mpregunta.id_usup = eusuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mpregunta.id_estado = ? ORDER BY mpregunta.id_pre DESC';
-            mysqlConnection.query(query, 2, (err, rows)=>{
-                if(!err){
-                        mysqlConnection.destroy();
-                        res.json({
-                            'status': 'Encontrados',
-                            'datos': rows
-                    });
-                }else{
+        const query = 'select mpregunta.id_pre, mpregunta.des_pre, mpregunta.fecha_pre, musuario.fecha_nac from mpregunta INNER JOIN eusuario ON mpregunta.id_usup = eusuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mpregunta.id_estado = ? ORDER BY mpregunta.id_pre DESC';
+        mysqlConnection.query(query, 2, (err, rows)=>{
+            if(!err){
                     mysqlConnection.destroy();
-                    console.error(err);
-                    res.json({'status': '¡ERROR!'});
-                }
-            });
-        }else if(clasi < 6 && clasi>0){
-            const query = 'select mpregunta.id_pre, mpregunta.des_pre, mpregunta.fecha_pre, musuario.fecha_nac from mpregunta INNER JOIN eusuario ON mpregunta.id_usup = eusuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mpregunta.id_estado = ? AND mrespuesta.id_cat = ? ORDER BY mpregunta.id_pre DESC';
-            mysqlConnection.query(query, [2, clasi], (err, rows)=>{
-                if(!err){
-                        mysqlConnection.destroy();
-                        res.json({
-                            'status': 'Encontrados',
-                            'datos': rows
+                    res.json({
+                        'status': 'Encontrados',
+                        'datos': rows
                     });
-                }else{
-                    mysqlConnection.destroy();
-                    console.error(err);
-                    res.json({'status': '¡ERROR!'});
-                }
-            });
-        }
+            }else{
+                mysqlConnection.destroy();
+                console.error(err);
+                res.json({'status': '¡ERROR!'});
+            }
+        });
     }else{
         res.json({'status': '¡ERROR!'})
     }
