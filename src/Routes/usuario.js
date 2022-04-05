@@ -24,18 +24,18 @@ var dire = 'https://quetzual.herokuapp.com/'
 
 function conectar(){
     const mysqlConnection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: '03042021',
-        database: 'bdquetzual',
+        host: 'us-cdbr-east-05.cleardb.net',
+        user: 'b5281614b1195e',
+        password: '1025be05',
+        database: 'heroku_3f56efd65cc9251',
         multipleStatements: true
         });
     mysqlConnection.connect(function (err) {
         if (err) {
-          console.error(err);
-          return;
+            console.error(err);
+            return;
         } 
-      });
+    });
     return mysqlConnection;
 }
 
@@ -1540,5 +1540,29 @@ router.post('/Obtener/Punt', (req, res)=>{
             }
         });
 });
+
+router.post('/Ranking/Historico/Actualizado', (req, res)=>{
+    const{clave} = req.body;
+    if(clave == claveadmin || clave == clavedoc){
+        var mysqlConnection = conectar();
+        const query = 'select cant_punt, id_usudoc from Puntos';
+        mysqlConnection.query(query,(err, rows)=>{
+            if(!err){
+                mysqlConnection.destroy();
+                res.json({
+                    'status':'Encontrados',
+                    'Datos': rows
+                    });
+            }else{
+                mysqlConnection.destroy();
+                console.error(err);
+                res.json({'status': '¡ERROR!'});
+            }
+        });
+    }else{
+        res.json({'status': '¡ERROR!'})
+    }
+});
+
 
 module.exports = router;
