@@ -32,7 +32,6 @@ router.post("/Iniciar/Sesion/Validar", (req, res) =>{
                 console.table(_rowws);
                 mysqlConnection.destroy();
                 const token = jwt.sign({
-                    clave: claves,
                     id: _rowws[0].id_usu,
                     id_rol: _rowws[0].id_rol
                 }, config, {
