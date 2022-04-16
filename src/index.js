@@ -11,6 +11,7 @@ app.use(express.json());
 app.use( '/quetzual/usuario', require('./Routes/usuario'));
 app.use( '/quetzual/pregunta', require('./Routes/preguntas'));
 app.use( '/quetzual/respuesta', require('./Routes/respuestas'));
+app.use( '/quetzual/Doctor', require('./Routes/Doctor'));
 
 app.listen(app.get('port'), () => {
     console.log(`Server on port ${app.get('port')}`);
