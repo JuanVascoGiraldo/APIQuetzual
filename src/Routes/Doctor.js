@@ -38,6 +38,7 @@ router.post("/Iniciar/Sesion/Validar", (req, res) =>{
                     expiresIn: 60 * 60 * 24
                 });
 
+                
                 res.json( {
                     status: "encontrado",
                     id_usu: _rowws[0].id_usu,
