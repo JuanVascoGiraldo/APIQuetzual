@@ -1,6 +1,7 @@
 const {Router} = require('express');
 const router = Router();
 const mysql = require('mysql');
+const jwt = require('jsonwebtoken');
 const config = 'S~J?xm,:c7WU8HFz)K$a$N&[V:ez*EN#';
 
 function conectar(){
@@ -38,7 +39,7 @@ router.post("/Iniciar/Sesion/Validar", (req, res) =>{
                     expiresIn: 60 * 60 * 24
                 });
 
-                
+
                 res.json( {
                     status: "encontrado",
                     id_usu: _rowws[0].id_usu,
