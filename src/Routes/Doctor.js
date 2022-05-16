@@ -325,6 +325,7 @@ router.post('/Ranking/Mensual', (req, res)=>{
     }
 });
 
+
 router.post('/Ranking/Historico', (req, res)=>{
     const token = req.headers["token"];
     if(!token){
