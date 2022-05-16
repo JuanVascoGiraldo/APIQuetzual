@@ -18,6 +18,7 @@ function conectar(){
           return;
         } 
       });
+      console.log("miau")
     return mysqlConnection;
 }
 
