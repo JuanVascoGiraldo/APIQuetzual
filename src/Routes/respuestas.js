@@ -13,6 +13,7 @@ function conectar(){
         user: process.env.BD_USER ||'root',
         password: process.env.BD_PASS ||'03042021',
         database: process.env.BD_NAME ||'bdquetzual',
+        ssl:{ca:fs.readFileSync("{ca-cert filename}")},
         port: 3306,
         multipleStatements: true,
         charset: 'UTF8_GENERAL_CI'
