@@ -15,19 +15,19 @@ var dire = 'https://quetzual.herokuapp.com/'
     password: '1025be05',
     database: 'heroku_3f56efd65cc9251',
 
-    host: 'localhost',
-    user: 'root',
-    password: '03042021',
-    database: 'bdquetzual',
+    host: process.env.BD_HOST || 'localhost',
+    user: process.env.BD_USER ||'root',
+    password: process.env.BD_PASS ||'03042021',
+    database: process.env.BD_NAME ||'bdquetzual',
 
 */
 
 function conectar(){
     const mysqlConnection = mysql.createConnection({
-        host: 'us-cdbr-east-05.cleardb.net',
-        user: 'b5281614b1195e',
-        password: '1025be05',
-        database: 'heroku_3f56efd65cc9251',
+        host: process.env.BD_HOST || 'localhost',
+        user: process.env.BD_USER ||'root',
+        password: process.env.BD_PASS ||'03042021',
+        database: process.env.BD_NAME ||'bdquetzual',
         multipleStatements: true
         });
     mysqlConnection.connect(function (err) {
