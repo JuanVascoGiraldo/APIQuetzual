@@ -577,6 +577,10 @@ router.post('/Registrar/Usuario/Doctor',(req, res) => {
 
 router.post("/Iniciar/Sesion/Validar", (req, res) =>{
     const {correo, contra} = req.body;
+    console.log(process.env.BD_HOST)
+    console.log(process.env.BD_USER)
+    console.log(process.env.BD_PASS)
+    console.log(process.env.BD_NAME)
     var  mysqlConnection = conectar();
     const query = 'select * from musuario where email_usu = ? and contra_usu = ? and habilitada = 1';
     mysqlConnection.query(query, [correo, contra], (_error, _rowws, _fields) =>{
