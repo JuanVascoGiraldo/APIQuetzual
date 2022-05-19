@@ -6,7 +6,6 @@ var claveusu = 'As7cnuLSSGkw85A8SdrDJmqLHsSJAfqd';
 var clavedoc = 'S:sVw>SN?j75zcA#-q{YdZ_5#W{E=X2q';
 var claveadmin = "72eV)'xL9}:NQ999X(MUFa$MTw]$zz;w";
 const config = 'S~J?xm,:c7WU8HFz)K$a$N&[V:ez*EN#';
-const fs = require('fs');
 
 function conectar(){
     const mysqlConnection = mysql.createConnection({
@@ -14,9 +13,7 @@ function conectar(){
         user: process.env.BD_USER ||'root',
         password: process.env.BD_PASS ||'03042021',
         database: process.env.BD_NAME ||'bdquetzual',
-        ssl:{ca:fs.readFileSync("DigiCertGlobalRootCA.crt.pem", "utf8")},
         port: 3306,
-        multipleStatements: true,
         charset: 'UTF8_GENERAL_CI'
         });
     mysqlConnection.connect(function (err) {
