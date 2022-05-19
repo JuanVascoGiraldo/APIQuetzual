@@ -3,13 +3,14 @@ const router = Router();
 const mysql = require('mysql');
 const jwt = require('jsonwebtoken');
 const config = 'S~J?xm,:c7WU8HFz)K$a$N&[V:ez*EN#';
-
+var fs = require('fs');
 function conectar(){
     const mysqlConnection = mysql.createConnection({
         host: process.env.BD_HOST || 'localhost',
         user: process.env.BD_USER ||'root',
         password: process.env.BD_PASS ||'03042021',
         database: process.env.BD_NAME ||'bdquetzual',
+        ssl:{ca:fs.readFileSync("DigiCertGlobalRootCA.crt.pem", "utf8")},
         port: 3306,
         multipleStatements: true
         });
