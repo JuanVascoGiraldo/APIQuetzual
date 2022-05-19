@@ -20,6 +20,8 @@ var dire = 'https://quetzual.herokuapp.com/'
     password: process.env.BD_PASS ||'03042021',
     database: process.env.BD_NAME ||'bdquetzual',
 
+    var conn=mysql.createConnection({host:"quetzual.mysql.database.azure.com", user:"quetzualadmin", password:"{your_password}", database:"{your_database}", port:3306, ssl:{ca:fs.readFileSync("{ca-cert filename}")}});
+
 */
 
 function conectar(){
@@ -28,6 +30,7 @@ function conectar(){
         user: process.env.BD_USER ||'root',
         password: process.env.BD_PASS ||'03042021',
         database: process.env.BD_NAME ||'bdquetzual',
+        port: 3306,
         multipleStatements: true
         });
     mysqlConnection.connect(function (err) {
