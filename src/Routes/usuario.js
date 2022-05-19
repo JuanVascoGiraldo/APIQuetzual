@@ -39,6 +39,22 @@ function conectar(){
     return mysqlConnection;
 }
 
+router.post('/Prueba',(req, res) => {
+    const {correo, contra} = req.body;
+    var  mysqlConnection = conectar();
+    const query = 'select * from musuario where email_usu = ? and contra_usu = ? and habilitada = 1';
+    mysqlConnection.query(query, [correo, contra], (_error, _rowws, _fields) =>{
+        if(!_error){
+            res.sendStatus(200);
+        }else{
+            console.error(_error);
+            mysqlConnection.destroy();
+            res.sendStatus(404);
+        }
+    });
+})
+
+
 function sendmail(correo, asunto, cuerpo){
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
