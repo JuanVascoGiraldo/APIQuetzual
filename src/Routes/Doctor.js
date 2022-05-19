@@ -3,7 +3,7 @@ const router = Router();
 const mysql = require('mysql');
 const jwt = require('jsonwebtoken');
 const config = 'S~J?xm,:c7WU8HFz)K$a$N&[V:ez*EN#';
-var fs = require('fs');
+const fs = require('fs');
 function conectar(){
     const mysqlConnection = mysql.createConnection({
         host: process.env.BD_HOST || 'localhost',

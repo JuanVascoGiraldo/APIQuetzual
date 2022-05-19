@@ -24,7 +24,7 @@ var dire = 'https://quetzual.herokuapp.com/'
 
 */
 
-import * as fs from 'node:fs';
+const fs = require('fs');
 function conectar(){
     const mysqlConnection = mysql.createConnection({
         host: process.env.BD_HOST || 'localhost',
