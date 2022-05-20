@@ -30,7 +30,14 @@ function conectar(){
         user: process.env.BD_USER ||'doadmin',
         password: process.env.BD_PASS ||'AVNS_ciFeykk5e2DliJT',
         database: process.env.BD_NAME ||'defaultdb',
-        port: process.env.PORT ||25060
+        port: process.env.PORT ||25060,
+        dialect: 'mysql',
+        dialectOptions: {
+            ssl: {
+                ssl: true,
+                cert: fs.readFileSync(path.resolve(__dirname, 'ca-certificate.crt')).toString()
+            }
+        }
         });
     mysqlConnection.connect(function (err) {
         if (err) {
