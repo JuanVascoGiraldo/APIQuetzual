@@ -306,7 +306,7 @@ router.post('/Registrar/Token',(req, res) => {
                         '</body>' +
                         '</html>';
                     sendmail(enviar, "Registro", cuerpo);
-                    mysqlConnection.destroy();
+                    mysqlConnection.end();
                     res.json({'status':'Enviado'});
                 }else {
                     mysqlConnection.destroy();
