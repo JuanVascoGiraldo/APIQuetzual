@@ -309,13 +309,13 @@ router.post('/Registrar/Token',(req, res) => {
                     mysqlConnection.end();
                     res.json({'status':'Enviado'});
                 }else {
-                    mysqlConnection.destroy();
+                    mysqlConnection.end();
                     res.json({'status': '¡ERROR!'});
                 }
 
             } else {
                 console.error(_error);
-                mysqlConnection.destroy();
+                mysqlConnection.end();
                 res.json({'status': '¡ERROR!'});
             }
         });
