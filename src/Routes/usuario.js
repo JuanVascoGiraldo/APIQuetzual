@@ -30,7 +30,8 @@ function conectar(){
         user: process.env.BD_USER ||'root',
         password: process.env.BD_PASS ||'03042021',
         database: process.env.BD_NAME ||'bdquetzual',
-        port: process.env.PORT || 3306
+        port: process.env.PORT || 3306,
+        queryTimeout: 6000, connectTimeout: 60000,
         });
     mysqlConnection.connect(function (err) {
         if (err) {
