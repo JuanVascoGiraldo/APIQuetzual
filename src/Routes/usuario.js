@@ -51,7 +51,7 @@ function conectar(){
     return mysqlConnection;
 }
 
-router.post('/Prueba',(req, res) => {
+router.get('/Prueba',(req, res) => {
     //const {correo, contra} = req.body;
     const correo = 'juanlandia3000'
     const contra = '1234566'
