@@ -39,7 +39,7 @@ function conectar(){
                 ssl: true,
                 cert: fs.readFileSync(path.resolve(__dirname, 'ca-certificate.crt')).toString()
             }
-            
+
         }
         });
     mysqlConnection.connect(function (err) {
@@ -52,7 +52,10 @@ function conectar(){
 }
 
 router.post('/Prueba',(req, res) => {
-    const {correo, contra} = req.body;
+    //const {correo, contra} = req.body;
+    const correo = 'juanlandia3000'
+    const contra = '1234566'
+    console.log("miau")
     var  mysqlConnection = conectar();
     const query = 'select * from MUsuario where email_usu = ? and contra_usu = ? and habilitada = 1';
     mysqlConnection.query(query, [correo, contra], (_error, _rowws, _fields) =>{
