@@ -13,7 +13,7 @@ function conectar(){
         user: process.env.BD_USER ||'doadmin',
         password: process.env.BD_PASS ||'AVNS_ciFeykk5e2DliJT',
         database: process.env.BD_NAME ||'defaultdb',
-        port: process.env.PORT || 3306,
+        port: process.env.PORT ||25060,
         charset: 'UTF8_GENERAL_CI'
         });
     mysqlConnection.connect(function (err) {
