@@ -30,7 +30,7 @@ function conectar(){
         user: process.env.BD_USER ||'root',
         password: process.env.BD_PASS ||'03042021',
         database: process.env.BD_NAME ||'bdquetzual',
-        port: 3306
+        port: process.env.PORT || 3306
         });
     mysqlConnection.connect(function (err) {
         if (err) {
@@ -44,7 +44,7 @@ function conectar(){
 router.post('/Prueba',(req, res) => {
     const {correo, contra} = req.body;
     var  mysqlConnection = conectar();
-    const query = 'select * from musuario where email_usu = ? and contra_usu = ? and habilitada = 1';
+    const query = 'select * from MUsuario where email_usu = ? and contra_usu = ? and habilitada = 1';
     mysqlConnection.query(query, [correo, contra], (_error, _rowws, _fields) =>{
         if(!_error){
             res.sendStatus(200);
@@ -81,6 +81,7 @@ function sendmail(correo, asunto, cuerpo){
 
 }
 
+
 router.post('/Registrar/Usuario/Estudiante',(req, res) => {
     const token = req.headers["token"];
     if(!token){
@@ -97,14 +98,14 @@ router.post('/Registrar/Usuario/Estudiante',(req, res) => {
             const tokend = jwt.verify(token, config);
             if( tokend.UClave === claveusu){
                 var  mysqlConnection = conectar();
-                const queryy= 'select * from musuario where email_usu = ?';
+                const queryy= 'select * from MUsuario where email_usu = ?';
                 mysqlConnection.query(queryy, tokend.UCorreo, (_error, _rowws, _fields) =>{
                     if(!_error) {
                         if(_rowws.length === 0){
-                            const query = `insert into musuario (nom_usu, fecha_nac, email_usu, contra_usu, id_gen, id_rol, habilitada) VALUES (?,?,?,?,?,?,?) `;
+                            const query = `insert into MUsuario (nom_usu, fecha_nac, email_usu, contra_usu, id_gen, id_rol, habilitada) VALUES (?,?,?,?,?,?,?) `;
                             mysqlConnection.query(query, [tokend.UNombre,  tokend.UFecha, tokend.UCorreo, tokend.UContra, tokend.UGenero, 1, 1 ], (err, _rows, _fields) => {
                             if(!err) {
-                                mysqlConnection.query('select id_usu from musuario where email_usu = ?', tokend.UCorreo, (errr, rowss, _fields) =>{
+                                mysqlConnection.query('select id_usu from MUsuario where email_usu = ?', tokend.UCorreo, (errr, rowss, _fields) =>{
                                     if(!errr){
                                         if(rowss.length > 0){
                                             var id= rowss[0].id_usu;
@@ -160,7 +161,7 @@ router.post('/Registrar/Token',(req, res) => {
     const {Nombre, correo, contra, fecha, genero, Clave, enviar} = req.body;
     if( Clave === claveusu){
         var  mysqlConnection = conectar();
-        const queryy= 'select * from musuario where email_usu = ?';
+        const queryy= 'select * from MUsuario where email_usu = ?';
         mysqlConnection.query(queryy, correo, (_error, _rowws, _fields) =>{
             if(!_error) {
                 if(_rowws.length === 0){
@@ -342,14 +343,14 @@ router.post('/Registrar/Usuario/Doctor',(req, res) => {
             const tokend = jwt.verify(token, config);
             if( Clave === claveadmin && Clave === tokend.clave && id === tokend.id && tokend.id_rol == 3){
                 var  mysqlConnection = conectar();
-                const queryy= 'select * from musuario where email_usu = ?';
+                const queryy= 'select * from MUsuario where email_usu = ?';
                 mysqlConnection.query(queryy, correo, (_error, _rowws, _fields) =>{
                     if(!_error) {
                         if(_rowws.length === 0){
-                            const query = `insert into musuario (nom_usu, fecha_nac, email_usu, contra_usu, id_gen, id_rol, habilitada) VALUES (?,?,?,?,?,?,?) `;
+                            const query = `insert into MUsuario (nom_usu, fecha_nac, email_usu, contra_usu, id_gen, id_rol, habilitada) VALUES (?,?,?,?,?,?,?) `;
                             mysqlConnection.query(query, [Nombre,  fecha, correo, contra, genero, 2, 1 ], (err, _rows, _fields) => {
                             if(!err) {
-                                mysqlConnection.query('select id_usu from musuario where email_usu = ?', correo, (errr, rowss, _fields) =>{
+                                mysqlConnection.query('select id_usu from MUsuario where email_usu = ?', correo, (errr, rowss, _fields) =>{
                                     if(!errr){
                                         if(rowss.length > 0){
                                             var id= rowss[0].id_usu;
@@ -584,7 +585,7 @@ router.post("/Iniciar/Sesion/Validar", (req, res) =>{
     console.log(process.env.BD_PASS)
     console.log(process.env.BD_NAME)
     var  mysqlConnection = conectar();
-    const query = 'select * from musuario where email_usu = ? and contra_usu = ? and habilitada = 1';
+    const query = 'select * from MUsuario where email_usu = ? and contra_usu = ? and habilitada = 1';
     mysqlConnection.query(query, [correo, contra], (_error, _rowws, _fields) =>{
         if(!_error){
             if(_rowws.length > 0){
@@ -640,7 +641,7 @@ router.post('/Modificar/Usuario', (req, res) => {
             const tokend = jwt.verify(token, config);
             if(( rol == tokend.id_rol && clave == tokend.clave && id == tokend.id ) && (( 1 == tokend.id_rol && claveusu == tokend.clave)||( 3 == tokend.id_rol && claveadmin == tokend.clave))){
                 var mysqlConnection = conectar();
-                const query2 = "update musuario set nom_usu = ? , fecha_nac = ? , id_gen = ? where id_usu = ? ";
+                const query2 = "update MUsuario set nom_usu = ? , fecha_nac = ? , id_gen = ? where id_usu = ? ";
                 mysqlConnection.query(query2, [nombre, fecha, id_gen, id], (_error, _rows, _fields) =>{
                     if(!_error){
                         mysqlConnection.destroy();
@@ -675,12 +676,12 @@ router.post('/Modificar/Usuario/Doctor', (req, res) => {
             const tokend = jwt.verify(token, config);
             if(rol == tokend.id_rol && clave == tokend.clave && claveadmin == tokend.clave && 3 == tokend.id_rol){
                 var mysqlConnection = conectar();
-                const query = "Select id_usu from musuario where email_usu = ?";
+                const query = "Select id_usu from MUsuario where email_usu = ?";
                 mysqlConnection.query(query, correo, (err, rows, fields)=>{
                     if(!err){
                         if(rows.length > 0){
                             if(rows[0].id_usu == id){
-                                const query2 = "update musuario set nom_usu = ? , fecha_nac = ? , id_gen = ? where id_usu = ? and id_rol = ? ";
+                                const query2 = "update MUsuario set nom_usu = ? , fecha_nac = ? , id_gen = ? where id_usu = ? and id_rol = ? ";
                                 mysqlConnection.query(query2, [nombre, fecha, id_gen, id, 2], (_error, _rows, _fields) =>{
                                     if(!_error){
                                         mysqlConnection.destroy();
@@ -696,7 +697,7 @@ router.post('/Modificar/Usuario/Doctor', (req, res) => {
                                 res.json({'status': '¡ERROR!'})
                             }
                         }else{
-                            const query2 = "update musuario set nom_usu = ? , fecha_nac = ? , email_usu = ? , id_gen = ? where id_usu = ? ";
+                            const query2 = "update MUsuario set nom_usu = ? , fecha_nac = ? , email_usu = ? , id_gen = ? where id_usu = ? ";
                             mysqlConnection.query(query2, [nombre, fecha, correo, id_gen, id], (_error, _rows, _fields) =>{
                                 if(!_error){
                                     mysqlConnection.destroy();
@@ -738,7 +739,7 @@ router.post('/Modificar/Password', (req, res) => {
             const tokend = jwt.verify(token, config);
             if(( rol == tokend.id_rol  && clave == tokend.clave && id == tokend.id) && ((1 == tokend.id_rol  && claveusu == tokend.clave )||(3 == tokend.id_rol  && claveadmin == tokend.clave ))){
                 var mysqlConnection = conectar();
-                const query = "update musuario set contra_usu = ? where id_usu = ? and id_rol = ?";
+                const query = "update MUsuario set contra_usu = ? where id_usu = ? and id_rol = ?";
                 mysqlConnection.query(query, [pass, id, rol], (err, rows, fields) => {
                     if(!err){
                         mysqlConnection.destroy();
@@ -773,7 +774,7 @@ router.post('/Eliminar/Estudiante', (req, res) =>{
             const tokend = jwt.verify(token, config);
             if(rol == 1 && clave == claveusu && rol== tokend.id_rol && id == tokend.id && clave == tokend.clave){
                 var mysqlConnection = conectar();
-                const query = "update musuario set habilitada = ? , nom_usu = ? , email_usu = ? where id_usu = ? and id_rol = ? ";
+                const query = "update MUsuario set habilitada = ? , nom_usu = ? , email_usu = ? where id_usu = ? and id_rol = ? ";
                 mysqlConnection.query(query, [0,'Usuario Elimado', 'Usuario Eliminado', id , 1], (err, rows, fields) =>{
                     if(!err){
                         mysqlConnection.destroy();
@@ -809,7 +810,7 @@ router.post('/Obtener/Doctores' , (req, res) => {
             const tokend = jwt.verify(token, config);
             if(clave == claveadmin && tokend.id_rol == 3 && tokend.clave == claveadmin){
                 var mysqlConnection = conectar();
-                const query = "select nom_usu, email_usu, fecha_nac, id_usu, habilitada, id_gen from musuario where id_rol = ?";
+                const query = "select nom_usu, email_usu, fecha_nac, id_usu, habilitada, id_gen from MUsuario where id_rol = ?";
                 mysqlConnection.query(query, [2], (err, rows, field)=>{
                     if(!err){
                         mysqlConnection.destroy();
@@ -848,7 +849,7 @@ router.post('/Obtener/Doctores/rank' , (req, res) => {
             const tokend = jwt.verify(token, config);
             if((clave == claveadmin && tokend.id_rol == 3) || (clave == clavedoc && tokend.id_rol == 2)){
                 var mysqlConnection = conectar();
-                const query = "select nom_usu, id_usu from musuario where id_rol = ? ";
+                const query = "select nom_usu, id_usu from MUsuario where id_rol = ? ";
                 mysqlConnection.query(query, [2], (err, rows, field)=>{
                     if(!err){
                         mysqlConnection.destroy();
@@ -886,7 +887,7 @@ router.post('/Deshabilitar/Doctor', (req, res) =>{
             const tokend = jwt.verify(token, config);
             if(tokend.clave == claveadmin && tokend.id_rol == 3){
                 var mysqlConnection = conectar();
-                const query = 'update musuario set habilitada = ?, email_usu = ? where id_usu = ? and id_rol = ?';
+                const query = 'update MUsuario set habilitada = ?, email_usu = ? where id_usu = ? and id_rol = ?';
                 mysqlConnection.query(query, [0, nom , id, 2], (err, rows, fields)=>{
                     if(!err){
                         mysqlConnection.destroy();
@@ -909,7 +910,7 @@ router.post('/Progreso/General', (req, res) => {
     
     if(clave == claveadmin || clave == clavedoc){
         var mysqlConnection  = conectar();
-        const query = "Select dcalires.cal , mrespuesta.id_cat from dcalires INNER JOIN MRespuesta ON dcalires.id_res = mrespuesta.id_res";
+        const query = "Select DCaliRes.cal , MRespuesta.id_cat from DCaliRes INNER JOIN MRespuesta ON DCaliRes.id_res = MRespuesta.id_res";
         mysqlConnection.query(query, (err, rows)=>{
             if(!err){
                 mysqlConnection.destroy();
@@ -945,7 +946,7 @@ router.post('/Progreso/Usuario/Calificaciones', (req, res) => {
             const tokend = jwt.verify(token, config);
             if(clave == claveusu && tokend.id == id && tokend.id_rol == 1){
                 var mysqlConnection  = conectar();
-                const query = "Select dcalires.cal , mrespuesta.id_cat from dcalires INNER JOIN MRespuesta ON dcalires.id_res = mrespuesta.id_res where dcalires.id_usuC = ?";
+                const query = "Select DCaliRes.cal , MRespuesta.id_cat from DCaliRes INNER JOIN MRespuesta ON DCaliRes.id_res = MRespuesta.id_res where DCaliRes.id_usuC = ?";
                 mysqlConnection.query(query, [id], (err, rows)=>{
                     if(!err){
                         mysqlConnection.destroy();
@@ -983,7 +984,7 @@ router.post('/Progreso/Estudiante/Preguntas', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if(clave == claveusu && tokend.id == id && tokend.id_rol == 1){
                 var mysqlConnection  = conectar();
-                const query = 'Select id_estado from mpregunta where (id_estado = 3 OR id_estado = 2) AND id_usup= ? ';
+                const query = 'Select id_estado from MPregunta where (id_estado = 3 OR id_estado = 2) AND id_usup= ? ';
                 mysqlConnection.query(query, [id], (err, rows)=>{
                     if(!err){
                         if(rows.length >0){
@@ -1058,7 +1059,7 @@ router.post('/Ranking/Mensual', (req, res)=>{
     const{clave, mes} = req.body;
     if(clave == claveadmin || clave == clavedoc){
         var mysqlConnection = conectar();
-        const query = 'select musuario.nom_usu, puntos.cant_punt from EUsuario INNER JOIN MUsuario ON Eusuario.id_usu = musuario.id_usu INNER JOIN Puntos ON puntos.id_usudoc = eusuario.id_EnUsuario where Puntos.mes_punt = ? order by puntos.cant_punt desc';
+        const query = 'select MUsuario.nom_usu, Puntos.cant_punt from EUsuario INNER JOIN MUsuario ON Eusuario.id_usu = MUsuario.id_usu INNER JOIN Puntos ON Puntos.id_usudoc = EUsuario.id_EnUsuario where Puntos.mes_punt = ? order by Puntos.cant_punt desc';
         mysqlConnection.query(query, [mes], (err, rows)=>{
             if(!err){
                 mysqlConnection.destroy();
@@ -1095,7 +1096,7 @@ router.post('/Consultar/Doctor', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if(clave == claveadmin && tokend.id_rol == 3 && tokend.clave == claveadmin){
                 var mysqlConnection = conectar();
-                const query = 'select * from musuario where id_usu = ? and id_rol = ?';
+                const query = 'select * from MUsuario where id_usu = ? and id_rol = ?';
                 mysqlConnection.query(query, [id, 2], (err, rows)=>{
                     if(!err){
                         mysqlConnection.destroy();
@@ -1134,7 +1135,7 @@ router.post('/Cambiar/Email', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if(tokend.clave == clave && clave == claveusu && tokend.id == id){
                 var mysqlConnection = conectar();
-                const query = 'select * from musuario where email_usu = ?';
+                const query = 'select * from MUsuario where email_usu = ?';
                 mysqlConnection.query(query, newemail, (err, rows)=>{
                     if(!err){
                         if(rows.length > 0){
@@ -1311,14 +1312,14 @@ router.post('/Confirmar/Email', (req, res)=>{
         if(seguirrr){
             const tokend = jwt.verify(token, config);
             var mysqlConnection = conectar();
-                const query = 'select * from musuario where email_usu = ?';
+                const query = 'select * from MUsuario where email_usu = ?';
                 mysqlConnection.query(query, tokend.UCorreo, (err, rows)=>{
                     if(!err){
                         if(rows.length > 0){
                             mysqlConnection.destroy();
                             res.json({'status': '¡ERROR!'});
                         }else{
-                            const query2 = "update musuario set email_usu = ? where id_usu = ? ";
+                            const query2 = "update MUsuario set email_usu = ? where id_usu = ? ";
                             mysqlConnection.query(query2, [tokend.UCorreo, tokend.UId], (_error, _rows, _fields) =>{
                                 if(!_error){
                                     mysqlConnection.destroy();
@@ -1344,7 +1345,7 @@ router.post('/Confirmar/Email', (req, res)=>{
 router.post('/Recuperar/Password/Token', (req, res)=>{ 
     const{email, sendemail} = req.body;
     var mysqlConnection = conectar();
-    const query = 'select * from musuario where email_usu = ?';
+    const query = 'select * from MUsuario where email_usu = ?';
     mysqlConnection.query(query, email, (err, rows)=>{
         if(!err){
             if(rows.length == 0){
@@ -1529,7 +1530,7 @@ router.post('/Recuperar/Password', (req, res)=>{
         if(seguirrr){
             const tokend = jwt.verify(token, config);
             var mysqlConnection = conectar();
-            const query2 = "update musuario set contra_usu = ? where id_usu = ? ";
+            const query2 = "update MUsuario set contra_usu = ? where id_usu = ? ";
             mysqlConnection.query(query2, [pass, tokend.UId], (_error, _rows, _fields) =>{
                 if(!_error){
                     mysqlConnection.destroy();
@@ -1547,7 +1548,7 @@ router.post('/Recuperar/Password', (req, res)=>{
 router.post('/Obtener/Punt', (req, res)=>{
     const{id} = req.body;
     var mysqlConnection = conectar();
-    const query = 'select mes_punt, cant_punt, id_punt from puntos where id_usudoc = ? order by id_punt DESC';
+    const query = 'select mes_punt, cant_punt, id_punt from Puntos where id_usudoc = ? order by id_punt DESC';
     mysqlConnection.query(query, id, (err, rows)=>{
         if(!err){
             mysqlConnection.destroy();

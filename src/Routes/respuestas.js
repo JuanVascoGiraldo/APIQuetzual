@@ -13,7 +13,7 @@ function conectar(){
         user: process.env.BD_USER ||'root',
         password: process.env.BD_PASS ||'03042021',
         database: process.env.BD_NAME ||'bdquetzual',
-        port: 3306,
+        port: process.env.PORT || 3306,
         charset: 'UTF8_GENERAL_CI'
         });
     mysqlConnection.connect(function (err) {
@@ -43,10 +43,10 @@ router.post('/Pregunta/Rechazar', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if(clave == clavedoc && tokend.id_rol == 2 && tokend.clave == clavedoc && id_doc == tokend.id){
                 var mysqlConnection = conectar();
-                const query = 'update mpregunta set id_estado = ? where id_pre = ?  and id_estado = 1';
+                const query = 'update MPregunta set id_estado = ? where id_pre = ?  and id_estado = 1';
                 mysqlConnection.query(query, [ 3, id_pre], (err, rows)=>{
                     if(!err){
-                        const query2 = 'insert into mrespuesta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (?, ?, ?, ?, ?)';
+                        const query2 = 'insert into MRespuesta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (?, ?, ?, ?, ?)';
                         mysqlConnection.query(query2, [id_pre, razon, fecha, 6, id_doc], (_err, _rows)=>{
                             if(!_err){
                                 mysqlConnection.destroy();
@@ -73,7 +73,7 @@ router.post('/Pregunta/Rechazar', (req, res)=>{
 router.post('/Cantidad/Respuesta', (req, res)=>{
     const {id} = req.body;
     var mysqlConnection = conectar();
-    const query = 'select id_cat from mrespuesta where id_pre = ?';
+    const query = 'select id_cat from MRespuesta where id_pre = ?';
     mysqlConnection.query(query, id, (err, rows)=>{
         if(!err){
             mysqlConnection.destroy();
@@ -92,7 +92,7 @@ router.post('/Cantidad/Respuesta', (req, res)=>{
 router.post('/Promedio/Respuestas', (req, res)=>{
     const {id} = req.body;
     var mysqlConnection = conectar();
-    const query = 'select cal from dcalires where id_res = ? ';
+    const query = 'select cal from DCaliRes where id_res = ? ';
     mysqlConnection.query(query, id, (err, rows)=>{
         if(!err){
             mysqlConnection.destroy();
@@ -126,7 +126,7 @@ router.post('/Historico/Doctor', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if((clave == clavedoc && tokend.id == id && tokend.id_rol == 2 && tokend.clave == clavedoc )|| (clave ==  claveadmin && tokend.id_rol == 3 && tokend.clave == claveadmin )){
                 var mysqlConnection = conectar();
-                const query = 'select mpregunta.id_pre, mpregunta.id_estado, mpregunta.des_pre, mpregunta.fecha_pre, mrespuesta.id_res, mrespuesta.des_res, mrespuesta.id_cat, mrespuesta.fecha_res, musuario.fecha_nac from mrespuesta INNER JOIN mpregunta ON mrespuesta.id_pre = mpregunta.id_pre INNER JOIN eusuario ON mpregunta.id_usup = eusuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mrespuesta.id_usures = ?';
+                const query = 'select MPregunta.id_pre, MPregunta.id_estado, MPregunta.des_pre, MPregunta.Fecha_pre, MRespuesta.id_res, MRespuesta.des_res, MRespuesta.id_cat, MRespuesta.fecha_res, MUsuario.fecha_nac from MRespuesta INNER JOIN MPregunta ON MRespuesta.id_pre = MPregunta.id_pre INNER JOIN EUsuario ON MPregunta.id_usup = EUsuario.id_EnUsuario INNER JOIN MUsuario ON EUsuario.id_usu = MUsuario.id_usu where MRespuesta.id_usures = ?';
                 mysqlConnection.query(query, id, (err, rows)=>{
                     if(!err){
                         mysqlConnection.destroy();
@@ -149,7 +149,7 @@ router.post('/Historico/Doctor', (req, res)=>{
 
 //requiere token
 router.post('/Pregunta/Responder', (req, res)=>{
-    const{id_pre, id_doc, fecha, respuesta, pregunta, clave, categoria , puntos} = req.body;
+    const{id_pre, id_doc, fecha, respuesta, pregunta, clave, categoria , Puntos} = req.body;
     const token = req.headers["token"];
     if(!token){
         res.json({'status': '¡ERROR!'});
@@ -165,10 +165,10 @@ router.post('/Pregunta/Responder', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if(clave == clavedoc && categoria < 6 && tokend.clave == clavedoc && tokend.id == id_doc && tokend.id_rol == 2){
                 var mysqlConnection = conectar();
-                const query = 'update mpregunta set des_pre = ? , id_estado = ? where id_pre = ?  and id_estado = 1';
+                const query = 'update MPregunta set des_pre = ? , id_estado = ? where id_pre = ?  and id_estado = 1';
                 mysqlConnection.query(query, [pregunta, 2, id_pre], (err, rows)=>{
                     if(!err){
-                        const query2 = 'insert into mrespuesta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (?, ?, ?, ?, ?)';
+                        const query2 = 'insert into MRespuesta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (?, ?, ?, ?, ?)';
                         mysqlConnection.query(query2, [id_pre, respuesta, fecha, categoria, id_doc], (_err, _rows)=>{
                             if(!_err){
                                 var str = fecha.split("/");
@@ -177,9 +177,9 @@ router.post('/Pregunta/Responder', (req, res)=>{
                                 mysqlConnection.query(query3, [id_doc, meses], (err_, rows_)=>{
                                     if(!err_){
                                         if(rows_.length >0){
-                                            var puntostotales = rows_[0].cant_punt + puntos;
-                                            const query4 = 'update puntos set cant_punt = ? where id_punt = ?';
-                                            mysqlConnection.query(query4, [puntostotales, rows_[0].id_punt], (_err_, _rows_)=>{
+                                            var Puntostotales = rows_[0].cant_punt + Puntos;
+                                            const query4 = 'update Puntos set cant_punt = ? where id_punt = ?';
+                                            mysqlConnection.query(query4, [Puntostotales, rows_[0].id_punt], (_err_, _rows_)=>{
                                                 if(!_err_){
                                                     mysqlConnection.destroy();
                                                     res.json({'status': 'Pregunta Guardada'});
@@ -190,8 +190,8 @@ router.post('/Pregunta/Responder', (req, res)=>{
                                                 }
                                             });
                                         }else{
-                                            const query5 = 'insert into puntos (id_usudoc, mes_punt, cant_punt) VALUES (?, ?, ?)';
-                                            mysqlConnection.query(query5, [id_doc, meses, puntos], (_err_, _rows_)=>{
+                                            const query5 = 'insert into Puntos (id_usudoc, mes_punt, cant_punt) VALUES (?, ?, ?)';
+                                            mysqlConnection.query(query5, [id_doc, meses, Puntos], (_err_, _rows_)=>{
                                                 if(!_err_){
                                                     mysqlConnection.destroy();
                                                     res.json({'status': 'Pregunta Guardada'});
@@ -245,12 +245,12 @@ router.post('/Responder/Pregunta/Respondida', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if(clavedoc == clave && tokend.id == id_doc && tokend.id_rol == 2 && tokend.clave == clavedoc){
                 var mysqlConnection = conectar();
-                const query = 'select id_cat from mrespuesta where id_pre = ?';
+                const query = 'select id_cat from MRespuesta where id_pre = ?';
                 mysqlConnection.query(query, id_pre, (err, rows)=>{
                     if(!err){
                         if(rows.length > 0){
                             var cat = rows[0].id_cat;
-                            const query2 = 'insert into mrespuesta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (? , ? , ?, ?, ?)';
+                            const query2 = 'insert into MRespuesta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (? , ? , ?, ?, ?)';
                             mysqlConnection.query(query2, [id_pre, respuesta, fecha, cat, id_doc], (_err,_rows)=>{
                                 if(!_err){
                                     var str = fecha.split("/");
@@ -259,9 +259,9 @@ router.post('/Responder/Pregunta/Respondida', (req, res)=>{
                                     mysqlConnection.query(query3, [id_doc, meses], (err_, rows_)=>{
                                     if(!err_){
                                         if(rows_.length >0){
-                                            var puntostotales = rows_[0].cant_punt + 1;
-                                            const query4 = 'update puntos set cant_punt = ? where id_punt = ?';
-                                            mysqlConnection.query(query4, [puntostotales, rows_[0].id_punt], (_err_, _rows_)=>{
+                                            var Puntostotales = rows_[0].cant_punt + 1;
+                                            const query4 = 'update Puntos set cant_punt = ? where id_punt = ?';
+                                            mysqlConnection.query(query4, [Puntostotales, rows_[0].id_punt], (_err_, _rows_)=>{
                                                 if(!_err_){
                                                     mysqlConnection.destroy();
                                                     res.json({'status': 'Pregunta Guardada'});
@@ -272,7 +272,7 @@ router.post('/Responder/Pregunta/Respondida', (req, res)=>{
                                                 }
                                             });
                                         }else{
-                                            const query5 = 'insert into puntos (id_usudoc, mes_punt, cant_punt) VALUES (?, ?, ?)';
+                                            const query5 = 'insert into Puntos (id_usudoc, mes_punt, cant_punt) VALUES (?, ?, ?)';
                                             mysqlConnection.query(query5, [id_doc, meses, 1], (_err_, _rows_)=>{
                                                 if(!_err_){
                                                     mysqlConnection.destroy();
@@ -332,15 +332,15 @@ router.post('/Calificar/Respuesta/Usuario', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if(tokend.id == usu && tokend.id_rol == 1 && tokend.clave== claveusu){
                 var mysqlConnection = conectar();
-                const query = 'select * from dcalires where id_usuc = ? and id_res = ?';
+                const query = 'select * from DCaliRes where id_usuC = ? and id_res = ?';
                 mysqlConnection.query(query,[usu, resp], (err, rows)=>{
                     if(!err){
                         if(rows.length > 0){
                             var id = rows[0].id_CaliRes;
-                            const query2 = 'update dcalires set cal = ? where id_calires = ?';
+                            const query2 = 'update DCaliRes set cal = ? where id_CaliRes = ?';
                             mysqlConnection.query(query2,[calif, id], (_err, _rows)=>{
                                 if(!_err){
-                                    const query3 = 'select cal from dcalires where id_res = ?';
+                                    const query3 = 'select cal from DCaliRes where id_res = ?';
                                     mysqlConnection.query(query3, resp, (err_, rows_)=>{
                                         if(!err_){
                                             if(rows_.length > 20){
@@ -350,10 +350,10 @@ router.post('/Calificar/Respuesta/Usuario', (req, res)=>{
                                                 }
                                                 var promedio = total / rows_.length;
                                                 if(promedio < 3){
-                                                    const query4 = 'delete from dcalires where id_res = ?';
+                                                    const query4 = 'delete from DCaliRes where id_res = ?';
                                                     mysqlConnection.query(query4, resp, (_err_, _rows_)=>{
                                                         if(!_err_){
-                                                            const query5 = 'select id_pre, id_usures, fecha_res from mrespuesta where id_res = ?';
+                                                            const query5 = 'select id_pre, id_usures, fecha_res from MRespuesta where id_res = ?';
                                                             mysqlConnection.query(query5, resp, (_errr_, _rowss_)=>{
                                                                 if(!_errr_){
                                                                     var pre = _rowss_[0].id_pre;
@@ -361,28 +361,28 @@ router.post('/Calificar/Respuesta/Usuario', (req, res)=>{
                                                                     var fecha = _rowss_[0].fecha_res;
                                                                     var str = fecha.split("/");
                                                                     var mes = str[1] + "/" + str[2];
-                                                                    const query6 = 'select id_pre from mrespuesta where id_pre = ?';
+                                                                    const query6 = 'select id_pre from MRespuesta where id_pre = ?';
                                                                     mysqlConnection.query(query6, pre, (__err, __rows)=>{
                                                                         if(!__err){
                                                                             var preguntas = __rows.length - 1;
                                                                             if(preguntas == 0){
-                                                                                const query7 = 'update mpregunta set id_estado = ? where id_pre = ?';
+                                                                                const query7 = 'update MPregunta set id_estado = ? where id_pre = ?';
                                                                                 mysqlConnection.query(query7, [1, pre], (__err_, __rows_) =>{
                                                                                     if(!__err_){
-                                                                                        const query8 = 'delete from mrespuesta where id_res = ?';
+                                                                                        const query8 = 'delete from MRespuesta where id_res = ?';
                                                                                         mysqlConnection.query(query8, resp, (__err__, __rows__)=>{
                                                                                             if(!__err__){
-                                                                                                const query9 = 'select id_punt, cant_punt from puntos where id_usudoc = ? and mes_punt = ?';
+                                                                                                const query9 = 'select id_punt, cant_punt from Puntos where id_usudoc = ? and mes_punt = ?';
                                                                                                 mysqlConnection.query(query9, [doc, mes],(er, row)=>{
                                                                                                     if(!er){
-                                                                                                        var puntos = row[0].cant_punt;
-                                                                                                        var puntos =- 2;
-                                                                                                        if(puntos < 0){
-                                                                                                            puntos = 0;
+                                                                                                        var Puntos = row[0].cant_punt;
+                                                                                                        var Puntos =- 2;
+                                                                                                        if(Puntos < 0){
+                                                                                                            Puntos = 0;
                                                                                                         }
                                                                                                         var idpunt = row[0].id_punt;
-                                                                                                        const query10 = 'update puntos set cant_punt = ? where id_punt = ?';
-                                                                                                        mysqlConnection.query(query10, [puntos, idpunt], (error, colum)=>{
+                                                                                                        const query10 = 'update Puntos set cant_punt = ? where id_punt = ?';
+                                                                                                        mysqlConnection.query(query10, [Puntos, idpunt], (error, colum)=>{
                                                                                                             if(!error){
                                                                                                                 mysqlConnection.destroy();
                                                                                                                 res.json({'status': 'Eliminada'});
@@ -411,20 +411,20 @@ router.post('/Calificar/Respuesta/Usuario', (req, res)=>{
                                                                                     }
                                                                                 });
                                                                             }else if(preguntas > 0){
-                                                                                const query7 = 'delete from mrespuesta where id_res = ?';
+                                                                                const query7 = 'delete from MRespuesta where id_res = ?';
                                                                                 mysqlConnection.query(query7, resp, (__err_, __rows_)=>{
                                                                                     if(!__err_){
-                                                                                        const query9 = 'select id_punt, cant_punt from puntos where id_usudoc = ? and mes_punt = ?';
+                                                                                        const query9 = 'select id_punt, cant_punt from Puntos where id_usudoc = ? and mes_punt = ?';
                                                                                                 mysqlConnection.query(query9, [doc, mes],(er, row)=>{
                                                                                                     if(!er){
-                                                                                                        var puntos = row[0].cant_punt;
-                                                                                                        var puntos =- 2;
-                                                                                                        if(puntos < 0){
-                                                                                                            puntos = 0;
+                                                                                                        var Puntos = row[0].cant_punt;
+                                                                                                        var Puntos =- 2;
+                                                                                                        if(Puntos < 0){
+                                                                                                            Puntos = 0;
                                                                                                         }
                                                                                                         var idpunt = row[0].id_punt;
-                                                                                                        const query10 = 'update puntos set cant_punt = ? where id_punt = ?';
-                                                                                                        mysqlConnection.query(query10, [puntos, idpunt], (error, colum)=>{
+                                                                                                        const query10 = 'update Puntos set cant_punt = ? where id_punt = ?';
+                                                                                                        mysqlConnection.query(query10, [Puntos, idpunt], (error, colum)=>{
                                                                                                             if(!error){
                                                                                                                 mysqlConnection.destroy();
                                                                                                                 res.json({'status': 'Eliminada'});
@@ -486,10 +486,10 @@ router.post('/Calificar/Respuesta/Usuario', (req, res)=>{
                                 }
                             });
                         }else{
-                            const query2 = 'insert into dcalires (id_usuc, id_res, cal) VALUES (?, ?, ?)';
+                            const query2 = 'insert into DCaliRes (id_usuC, id_res, cal) VALUES (?, ?, ?)';
                             mysqlConnection.query(query2, [usu, resp, calif], (_err, _rows)=>{
                                 if(!_err){
-                                    const query3 = 'select cal from dcalires where id_res = ?';
+                                    const query3 = 'select cal from DCaliRes where id_res = ?';
                                     mysqlConnection.query(query3, resp, (err_, rows_)=>{
                                         if(!err_){
                                             if(rows_.length > 20){
@@ -499,10 +499,10 @@ router.post('/Calificar/Respuesta/Usuario', (req, res)=>{
                                                 }
                                                 var promedio = total / rows_.length;
                                                 if(promedio < 3){
-                                                    const query4 = 'delete from dcalires where id_res = ?';
+                                                    const query4 = 'delete from DCaliRes where id_res = ?';
                                                     mysqlConnection.query(query4, resp, (_err_, _rows_)=>{
                                                         if(!_err_){
-                                                            const query5 = 'select id_pre, id_usures, fecha_res from mrespuesta where id_res = ?';
+                                                            const query5 = 'select id_pre, id_usures, fecha_res from MRespuesta where id_res = ?';
                                                             mysqlConnection.query(query5, resp, (_errr_, _rowss_)=>{
                                                                 if(!_errr_){
                                                                     var pre = _rowss_[0].id_pre;
@@ -510,28 +510,28 @@ router.post('/Calificar/Respuesta/Usuario', (req, res)=>{
                                                                     var fecha = _rowss_[0].fecha_res;
                                                                     var str = fecha.split("/");
                                                                     var mes = str[1] + "/" + str[2];
-                                                                    const query6 = 'select id_pre from mrespuesta where id_pre = ?';
+                                                                    const query6 = 'select id_pre from MRespuesta where id_pre = ?';
                                                                     mysqlConnection.query(query6, pre, (__err, __rows)=>{
                                                                         if(!__err){
                                                                             var preguntas = __rows.length - 1;
                                                                             if(preguntas == 0){
-                                                                                const query7 = 'update mpregunta set id_estado = ? where id_pre = ?';
+                                                                                const query7 = 'update MPregunta set id_estado = ? where id_pre = ?';
                                                                                 mysqlConnection.query(query7, [1, pre], (__err_, __rows_) =>{
                                                                                     if(!__err_){
-                                                                                        const query8 = 'delete from mrespuesta where id_res = ?';
+                                                                                        const query8 = 'delete from MRespuesta where id_res = ?';
                                                                                         mysqlConnection.query(query8, resp, (__err__, __rows__)=>{
                                                                                             if(!__err__){
-                                                                                                const query9 = 'select id_punt, cant_punt from puntos where id_usudoc = ? and mes_punt = ?';
+                                                                                                const query9 = 'select id_punt, cant_punt from Puntos where id_usudoc = ? and mes_punt = ?';
                                                                                                 mysqlConnection.query(query9, [doc, mes],(er, row)=>{
                                                                                                     if(!er){
-                                                                                                        var puntos = row[0].cant_punt;
-                                                                                                        var puntos =- 2;
-                                                                                                        if(puntos < 0){
-                                                                                                            puntos = 0;
+                                                                                                        var Puntos = row[0].cant_punt;
+                                                                                                        var Puntos =- 2;
+                                                                                                        if(Puntos < 0){
+                                                                                                            Puntos = 0;
                                                                                                         }
                                                                                                         var idpunt = row[0].id_punt;
-                                                                                                        const query10 = 'update puntos set cant_punt = ? where id_punt = ?';
-                                                                                                        mysqlConnection.query(query10, [puntos, idpunt], (error, colum)=>{
+                                                                                                        const query10 = 'update Puntos set cant_punt = ? where id_punt = ?';
+                                                                                                        mysqlConnection.query(query10, [Puntos, idpunt], (error, colum)=>{
                                                                                                             if(!error){
                                                                                                                 mysqlConnection.destroy();
                                                                                                                 res.json({'status': 'Eliminada'});
@@ -560,20 +560,20 @@ router.post('/Calificar/Respuesta/Usuario', (req, res)=>{
                                                                                     }
                                                                                 });
                                                                             }else if(preguntas > 0){
-                                                                                const query7 = 'delete from mrespuesta where id_res = ?';
+                                                                                const query7 = 'delete from MRespuesta where id_res = ?';
                                                                                 mysqlConnection.query(query7, resp, (__err_, __rows_)=>{
                                                                                     if(!__err_){
-                                                                                        const query9 = 'select id_punt, cant_punt from puntos where id_usudoc = ? and mes_punt = ?';
+                                                                                        const query9 = 'select id_punt, cant_punt from Puntos where id_usudoc = ? and mes_punt = ?';
                                                                                                 mysqlConnection.query(query9, [doc, mes],(er, row)=>{
                                                                                                     if(!er){
-                                                                                                        var puntos = row[0].cant_punt;
-                                                                                                        var puntos =- 2;
-                                                                                                        if(puntos < 0){
-                                                                                                            puntos = 0;
+                                                                                                        var Puntos = row[0].cant_punt;
+                                                                                                        var Puntos =- 2;
+                                                                                                        if(Puntos < 0){
+                                                                                                            Puntos = 0;
                                                                                                         }
                                                                                                         var idpunt = row[0].id_punt;
-                                                                                                        const query10 = 'update puntos set cant_punt = ? where id_punt = ?';
-                                                                                                        mysqlConnection.query(query10, [puntos, idpunt], (error, colum)=>{
+                                                                                                        const query10 = 'update Puntos set cant_punt = ? where id_punt = ?';
+                                                                                                        mysqlConnection.query(query10, [Puntos, idpunt], (error, colum)=>{
                                                                                                             if(!error){
                                                                                                                 mysqlConnection.destroy();
                                                                                                                 res.json({'status': 'Eliminada'});
@@ -652,7 +652,7 @@ router.post('/Consultar/Respuestas', (req, res)=>{
     const{clave, id_pre} = req.body;
     if(clave == clavedoc || clave == claveusu){
         var mysqlConnection = conectar();
-        const query = 'select mrespuesta.id_res, mrespuesta.des_res, mrespuesta.id_cat, mrespuesta.fecha_res, musuario.nom_usu, musuario.id_usu from mrespuesta INNER JOIN eusuario ON mrespuesta.id_usures = eusuario.id_EnUsuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mrespuesta.id_pre = ? AND mrespuesta.id_cat <6 ';
+        const query = 'select MRespuesta.id_res, MRespuesta.des_res, MRespuesta.id_cat, MRespuesta.fecha_res, MUsuario.nom_usu, MUsuario.id_usu from MRespuesta INNER JOIN EUsuario ON MRespuesta.id_usures = EUsuario.id_EnUsuario INNER JOIN MUsuario ON EUsuario.id_usu = MUsuario.id_usu where MRespuesta.id_pre = ? AND MRespuesta.id_cat <6 ';
         mysqlConnection.query(query, id_pre, (err, rows)=>{
             if(!err){
                 mysqlConnection.destroy();
@@ -689,7 +689,7 @@ router.post('/Calificada/Respuesta', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if(clave == claveusu && tokend.id == usu && tokend.id_rol ==1){
                 var mysqlConnection = conectar();
-                const query = "select cal from dcalires where id_res = ? and id_usuc = ?";
+                const query = "select cal from DCaliRes where id_res = ? and id_usuC = ?";
                 mysqlConnection.query(query, [resp, usu], (err, rows)=>{
                     if(!err){
                         if(rows.length > 0){

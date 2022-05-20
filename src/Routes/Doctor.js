@@ -9,7 +9,7 @@ function conectar(){
         user: process.env.BD_USER ||'root',
         password: process.env.BD_PASS ||'03042021',
         database: process.env.BD_NAME ||'bdquetzual',
-        port: 3306
+        port: process.env.PORT || 3306
         });
     mysqlConnection.connect(function (err) {
         if (err) {
@@ -24,7 +24,7 @@ function conectar(){
 router.post("/Iniciar/Sesion/Validar", (req, res) =>{
     const {email_usu, contra_usu} = req.body;
     var  mysqlConnection = conectar();
-    const query = 'select * from musuario where email_usu = ? and contra_usu = ? and habilitada = 1 and id_rol = 2';
+    const query = 'select * from MUsuario where email_usu = ? and contra_usu = ? and habilitada = 1 and id_rol = 2';
     mysqlConnection.query(query, [email_usu, contra_usu], (_error, _rowws, _fields) =>{
         if(!_error){
             if(_rowws.length > 0){
@@ -73,7 +73,7 @@ router.get('/Pendientes', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if(tokend.id_rol == 2){
                 var mysqlConnection = conectar();
-                const query = 'select * from mpregunta where id_estado = 1';
+                const query = 'select * from MPregunta where id_estado = 1';
                 mysqlConnection.query(query, (err, rows)=>{
                     if(!err){
                         mysqlConnection.destroy();
@@ -109,10 +109,10 @@ router.post('/Pregunta/Rechazar', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if(tokend.id_rol == 2 && tokend.id == id_usures){
                 var mysqlConnection = conectar();
-                const query = 'update mpregunta set id_estado = ? where id_pre = ?  and id_estado = 1';
+                const query = 'update MPregunta set id_estado = ? where id_pre = ?  and id_estado = 1';
                 mysqlConnection.query(query, [ 3, id_pre], (err, rows)=>{
                     if(!err){
-                        const query2 = 'insert into mrespuesta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (?, ?, ?, ?, ?)';
+                        const query2 = 'insert into MRespuesta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (?, ?, ?, ?, ?)';
                         mysqlConnection.query(query2, [id_pre, des_res, fecha_res, 6, id_usures], (_err, _rows)=>{
                             if(!_err){
                                 mysqlConnection.destroy();
@@ -155,7 +155,7 @@ router.get('/Historico/Doctor/Respondidas', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if(tokend.id_rol == 2){
                 var mysqlConnection = conectar();
-                const query = 'select mpregunta.id_pre, mpregunta.id_estado, mpregunta.des_pre, mpregunta.fecha_pre, mrespuesta.id_res, mrespuesta.des_res, mrespuesta.id_cat, mrespuesta.fecha_res, musuario.fecha_nac from mrespuesta INNER JOIN mpregunta ON mrespuesta.id_pre = mpregunta.id_pre INNER JOIN eusuario ON mpregunta.id_usup = eusuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mrespuesta.id_usures = ?  and mpregunta.id_estado = 2';
+                const query = 'select MPregunta.id_pre, MPregunta.id_estado, MPregunta.des_pre, MPregunta.Fecha_pre, MRespuesta.id_res, MRespuesta.des_res, MRespuesta.id_cat, MRespuesta.fecha_res, MUsuario.fecha_nac from MRespuesta INNER JOIN MPregunta ON MRespuesta.id_pre = MPregunta.id_pre INNER JOIN EUsuario ON MPregunta.id_usup = EUsuario.id_EnUsuario INNER JOIN MUsuario ON EUsuario.id_usu = MUsuario.id_usu where MRespuesta.id_usures = ?  and MPregunta.id_estado = 2';
                 mysqlConnection.query(query, tokend.id, (err, rows)=>{
                 if(!err){
                     mysqlConnection.destroy();
@@ -191,7 +191,7 @@ router.get('/Historico/Doctor/Rechazadas', (req, res)=>{
                 const tokend = jwt.verify(token, config);
                 if(tokend.id_rol == 2){
                     var mysqlConnection = conectar();
-                    const query = 'select mpregunta.id_pre, mpregunta.id_estado, mpregunta.des_pre, mpregunta.fecha_pre, mrespuesta.id_res, mrespuesta.des_res, mrespuesta.id_cat, mrespuesta.fecha_res, musuario.fecha_nac from mrespuesta INNER JOIN mpregunta ON mrespuesta.id_pre = mpregunta.id_pre INNER JOIN eusuario ON mpregunta.id_usup = eusuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mrespuesta.id_usures = ?  and mpregunta.id_estado = 3';
+                    const query = 'select MPregunta.id_pre, MPregunta.id_estado, MPregunta.des_pre, MPregunta.Fecha_pre, MRespuesta.id_res, MRespuesta.des_res, MRespuesta.id_cat, MRespuesta.fecha_res, MUsuario.fecha_nac from MRespuesta INNER JOIN MPregunta ON MRespuesta.id_pre = MPregunta.id_pre INNER JOIN EUsuario ON MPregunta.id_usup = EUsuario.id_EnUsuario INNER JOIN MUsuario ON EUsuario.id_usu = MUsuario.id_usu where MRespuesta.id_usures = ?  and MPregunta.id_estado = 3';
                     mysqlConnection.query(query, tokend.id, (err, rows)=>{
                     if(!err){
                         mysqlConnection.destroy();
@@ -228,10 +228,10 @@ router.get('/Historico/Doctor/Rechazadas', (req, res)=>{
                 const tokend = jwt.verify(token, config);
                 if(tokend.id_rol == 2 && tokend.id ==id_usures ){
                     var mysqlConnection = conectar();
-                    const query = 'update mpregunta set id_estado = ? where id_pre = ?  and id_estado = 1';
+                    const query = 'update MPregunta set id_estado = ? where id_pre = ?  and id_estado = 1';
                     mysqlConnection.query(query, [2, id_pre], (err, rows)=>{
                         if(!err){
-                            const query2 = 'insert into mrespuesta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (?, ?, ?, ?, ?)';
+                            const query2 = 'insert into MRespuesta (id_pre, des_res, fecha_res, id_cat, id_usures) VALUES (?, ?, ?, ?, ?)';
                             mysqlConnection.query(query2, [id_pre, des_res, fecha_res,  id_cat, id_usures], (_err, _rows)=>{
                                 if(!_err){
                                     var str = fecha_res.split("/");
@@ -240,9 +240,9 @@ router.get('/Historico/Doctor/Rechazadas', (req, res)=>{
                                     mysqlConnection.query(query3, [id_usures, meses], (err_, rows_)=>{
                                     if(!err_){
                                         if(rows_.length >0){
-                                            var puntostotales = rows_[0].cant_punt + 2;
-                                            const query4 = 'update puntos set cant_punt = ? where id_punt = ?';
-                                            mysqlConnection.query(query4, [puntostotales, rows_[0].id_punt], (_err_, _rows_)=>{
+                                            var Puntostotales = rows_[0].cant_punt + 2;
+                                            const query4 = 'update Puntos set cant_punt = ? where id_punt = ?';
+                                            mysqlConnection.query(query4, [Puntostotales, rows_[0].id_punt], (_err_, _rows_)=>{
                                                 if(!_err_){
                                                     mysqlConnection.destroy();
                                                     res.sendStatus(200);
@@ -253,7 +253,7 @@ router.get('/Historico/Doctor/Rechazadas', (req, res)=>{
                                                 }
                                             });
                                         }else{
-                                            const query5 = 'insert into puntos (id_usudoc, mes_punt, cant_punt) VALUES (?, ?, ?)';
+                                            const query5 = 'insert into Puntos (id_usudoc, mes_punt, cant_punt) VALUES (?, ?, ?)';
                                             mysqlConnection.query(query5, [id_usures, meses, 2], (_err_, _rows_)=>{
                                             if(!_err_){
                                                 mysqlConnection.destroy();
@@ -307,7 +307,7 @@ router.post('/Ranking/Mensual', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if(tokend.id_rol == 2){
                 var mysqlConnection = conectar();
-                const query = 'select musuario.nom_usu, puntos.cant_punt from EUsuario INNER JOIN MUsuario ON Eusuario.id_usu = musuario.id_usu INNER JOIN Puntos ON puntos.id_usudoc = eusuario.id_EnUsuario where Puntos.mes_punt = ? order by puntos.cant_punt desc';
+                const query = 'select MUsuario.nom_usu, Puntos.cant_punt from EUsuario INNER JOIN MUsuario ON Eusuario.id_usu = MUsuario.id_usu INNER JOIN Puntos ON Puntos.id_usudoc = EUsuario.id_EnUsuario where Puntos.mes_punt = ? order by Puntos.cant_punt desc';
                 mysqlConnection.query(query, [mes_punt], (err, rows)=>{
                     if(!err){
                         mysqlConnection.destroy();
@@ -343,7 +343,7 @@ router.post('/Ranking/Historico', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if(tokend.id_rol == 2){
                 var mysqlConnection = conectar();
-                const query = 'select id_usu, nom_usu from musuario where id_rol = 2';
+                const query = 'select id_usu, nom_usu from MUsuario where id_rol = 2';
                 const query2 = 'select cant_punt, id_usudoc from Puntos ';
                 mysqlConnection.query(query, (err, rows)=>{
                     if(!err){

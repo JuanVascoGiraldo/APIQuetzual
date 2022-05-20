@@ -13,7 +13,7 @@ function conectar(){
         user: process.env.BD_USER ||'root',
         password: process.env.BD_PASS ||'03042021',
         database: process.env.BD_NAME ||'bdquetzual',
-        port: 3306,
+        port: process.env.PORT || 3306,
         charset: 'UTF8_GENERAL_CI'
         });
     mysqlConnection.connect(function (err) {
@@ -43,7 +43,7 @@ router.post('/Realizar/Pregunta', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if(clave == claveusu && tokend.clave == claveusu && tokend.id == usu && tokend.id_rol == 1){
                 var mysqlConnection = conectar();
-                const query = 'insert into mpregunta (des_pre, fecha_pre, id_usup, id_estado) VALUES (?, ?, ?, ?)';
+                const query = 'insert into MPregunta (des_pre, Fecha_pre, id_usup, id_estado) VALUES (?, ?, ?, ?)';
                 mysqlConnection.query(query, [pregunta, fecha, usu, estado], (err, rows)=>{
                     if(!err){
                         mysqlConnection.destroy();
@@ -79,7 +79,7 @@ router.post('/Modificar/Pregunta/Pendiente', (req, res) =>{
             const tokend = jwt.verify(token, config);
             if(clave == claveusu && tokend.id_rol == 1 && tokend.id == usu && tokend.clave == claveusu){
                 var mysqlConnection = conectar();
-                const query = 'update mpregunta set des_pre = ? , fecha_pre = ? where id_pre = ? AND id_usup = ? AND id_estado = ?';
+                const query = 'update MPregunta set des_pre = ? , Fecha_pre = ? where id_pre = ? AND id_usup = ? AND id_estado = ?';
                 mysqlConnection.query(query, [pregunta, fecha, id_pre, usu, 1], (err, rows) =>{
                     if(!err){
                         mysqlConnection.destroy();
@@ -153,7 +153,7 @@ router.post('/Usuario/Preguntas', (req, res)=>{
             
                 var mysqlConnection = conectar();
                 if(estado == 3){
-                    const query = 'select mpregunta.des_pre , mpregunta.fecha_pre , mrespuesta.des_res, mrespuesta.fecha_res  from mpregunta INNER JOIN mrespuesta ON mpregunta.id_pre = mrespuesta.id_pre where mpregunta.id_usup = ? AND mpregunta.id_estado = ? ';
+                    const query = 'select MPregunta.des_pre , MPregunta.Fecha_pre , MRespuesta.des_res, MRespuesta.fecha_res  from MPregunta INNER JOIN MRespuesta ON MPregunta.id_pre = MRespuesta.id_pre where MPregunta.id_usup = ? AND MPregunta.id_estado = ? ';
                     mysqlConnection.query(query, [id_usu, estado], (err, rows) =>{
                         if(!err){
                             mysqlConnection.destroy();
@@ -168,7 +168,7 @@ router.post('/Usuario/Preguntas', (req, res)=>{
                         }
                     });
                 }else if(estado == 2 || estado == 1){
-                    const query = 'select * from mpregunta where id_usup = ? AND id_estado = ?';
+                    const query = 'select * from MPregunta where id_usup = ? AND id_estado = ?';
                     mysqlConnection.query(query, [id_usu, estado], (err, rows) =>{
                         if(!err){
                             mysqlConnection.destroy();
@@ -195,7 +195,7 @@ router.post('/Respondidas/Actuales', (req, res)=>{
     const {Clave} = req.body;
     if(Clave == claveusu || Clave == clavedoc){
         var mysqlConnection = conectar();
-        const query = 'select mpregunta.id_pre, mpregunta.des_pre, mpregunta.fecha_pre, musuario.fecha_nac from mpregunta INNER JOIN eusuario ON mpregunta.id_usup = eusuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mpregunta.id_estado = ? ORDER BY mpregunta.id_pre DESC';
+        const query = 'select MPregunta.id_pre, MPregunta.des_pre, MPregunta.Fecha_pre, MUsuario.fecha_nac from MPregunta INNER JOIN EUsuario ON MPregunta.id_usup = EUsuario.id_EnUsuario INNER JOIN MUsuario ON EUsuario.id_usu = MUsuario.id_usu where MPregunta.id_estado = ? ORDER BY MPregunta.id_pre DESC';
         mysqlConnection.query(query, 2, (err, rows)=>{
             if(!err){
                     mysqlConnection.destroy();
@@ -232,7 +232,7 @@ router.post('/Pendientes', (req, res)=>{
             const tokend = jwt.verify(token, config);
             if(clave == clavedoc && tokend.id_rol == 2 && tokend.clave == clavedoc){
                 var mysqlConnection = conectar();
-                const query = 'select * from mpregunta where id_estado = 1';
+                const query = 'select * from MPregunta where id_estado = 1';
                 mysqlConnection.query(query, (err, rows)=>{
                     if(!err){
                         mysqlConnection.destroy();
@@ -257,7 +257,7 @@ router.post('/Consultar/Pregunta', (req, res)=>{
     const{clave, id_pre} = req.body;
     if(clave == clavedoc || clave == claveusu){
         var mysqlConnection = conectar();
-        const query = 'select * from mpregunta where id_pre = ? and id_estado = ?';
+        const query = 'select * from MPregunta where id_pre = ? and id_estado = ?';
         mysqlConnection.query(query, [id_pre, 1], (err, rows)=>{
             if(!err){
                 mysqlConnection.destroy();
@@ -280,7 +280,7 @@ router.post('/Similares', (req, res)=>{
     const {clave, pre} = req.body;
     if(clave == claveusu){
         var mysqlConnection = conectar();
-        const query = 'select mpregunta.id_pre, mpregunta.des_pre, mpregunta.fecha_pre, musuario.fecha_nac from mpregunta INNER JOIN eusuario ON mpregunta.id_usup = eusuario.id_enusuario INNER JOIN musuario ON eusuario.id_usu = musuario.id_usu where mpregunta.id_estado = ?';
+        const query = 'select MPregunta.id_pre, MPregunta.des_pre, MPregunta.Fecha_pre, MUsuario.fecha_nac from MPregunta INNER JOIN EUsuario ON MPregunta.id_usup = EUsuario.id_EnUsuario INNER JOIN MUsuario ON EUsuario.id_usu = MUsuario.id_usu where MPregunta.id_estado = ?';
         mysqlConnection.query(query, 2, (err, rows)=>{
             if(!err){
                 var similares = [];
