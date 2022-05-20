@@ -26,14 +26,11 @@ var dire = 'https://quetzual.herokuapp.com/'
 
 function conectar(){
     const mysqlConnection = mysql.createConnection({
-        host: process.env.BD_HOST || 'localhost',
-        user: process.env.BD_USER ||'root',
-        password: process.env.BD_PASS ||'03042021',
-        database: process.env.BD_NAME ||'bdquetzual',
-        port: process.env.PORT || 3306,
-        queryTimeout: 6000, 
-        connectTimeout: 60000,
-        multipleStatements:true,
+        host: process.env.BD_HOST || 'db-mysql-nyc3-24175-do-user-9165338-0.b.db.ondigitalocean.com',
+        user: process.env.BD_USER ||'doadmin',
+        password: process.env.BD_PASS ||'AVNS_ciFeykk5e2DliJT',
+        database: process.env.BD_NAME ||'defaultdb',
+        port: process.env.PORT || 3306
         });
     mysqlConnection.connect(function (err) {
         if (err) {
@@ -309,16 +306,16 @@ router.post('/Registrar/Token',(req, res) => {
                         '</body>' +
                         '</html>';
                     sendmail(enviar, "Registro", cuerpo);
-                    mysqlConnection.end();
+                    mysqlConnection.destroy();
                     res.json({'status':'Enviado'});
                 }else {
-                    mysqlConnection.end();
+                    mysqlConnection.destroy();
                     res.json({'status': '¡ERROR!'});
                 }
 
             } else {
                 console.error(_error);
-                mysqlConnection.end();
+                mysqlConnection.destroy();
                 res.json({'status': '¡ERROR!'});
             }
         });
