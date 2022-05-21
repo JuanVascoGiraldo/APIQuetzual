@@ -5,11 +5,10 @@ const jwt = require('jsonwebtoken');
 const config = 'S~J?xm,:c7WU8HFz)K$a$N&[V:ez*EN#';
 function conectar(){
     const mysqlConnection = mysql.createConnection({
-        host: process.env.BD_HOST || 'db-mysql-nyc3-24175-do-user-9165338-0.b.db.ondigitalocean.com',
-        user: process.env.BD_USER ||'doadmin',
-        password: process.env.BD_PASS ||'AVNS_ciFeykk5e2DliJT',
-        database: process.env.BD_NAME ||'defaultdb',
-        port: process.env.PORT ||25060
+        host: process.env.BD_HOST || 'localhost',
+        user: process.env.BD_USER ||'root',
+        password: process.env.BD_PASS ||'JuanVasco22$',
+        database: process.env.BD_NAME ||'BDQuetzual',
         });
     mysqlConnection.connect(function (err) {
         if (err) {
