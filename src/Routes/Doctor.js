@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const config = 'S~J?xm,:c7WU8HFz)K$a$N&[V:ez*EN#';
 function conectar(){
     const mysqlConnection = mysql.createConnection({
-        host: process.env.BD_HOST || 'localhost',
+        host: process.env.BD_HOST || '127.0.0.1',
         user: process.env.BD_USER ||'juanv',
         password: process.env.BD_PASS ||'JuanVasco22$',
         database: process.env.BD_NAME ||'BDQuetzual',

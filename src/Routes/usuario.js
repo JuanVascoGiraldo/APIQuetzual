@@ -28,7 +28,7 @@ const path = require('path')
 
 function conectar(){
     const mysqlConnection = mysql.createConnection({
-        host: process.env.BD_HOST || 'localhost',
+        host: process.env.BD_HOST || '127.0.0.1',
         user: process.env.BD_USER ||'juanv',
         password: process.env.BD_PASS ||'JuanVasco22$',
         database: process.env.BD_NAME ||'BDQuetzual',
