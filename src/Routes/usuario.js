@@ -32,6 +32,7 @@ function conectar(){
         user: process.env.BD_USER ||'juanv',
         password: process.env.BD_PASS ||'JuanVasco22$',
         database: process.env.BD_NAME ||'BDQuetzual',
+        port: 3306
         });
     mysqlConnection.connect(function (err) {
         if (err) {
