@@ -150,6 +150,7 @@ router.post('/Historico/Doctor', (req, res)=>{
 //requiere token
 router.post('/Pregunta/Responder', (req, res)=>{
     const{id_pre, id_doc, fecha, respuesta, pregunta, clave, categoria , Puntos} = req.body;
+    console.log(Puntos);
     const token = req.headers["token"];
     if(!token){
         res.json({'status': '¡ERROR!'});

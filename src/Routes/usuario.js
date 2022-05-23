@@ -585,10 +585,6 @@ router.post('/Registrar/Usuario/Doctor',(req, res) => {
 
 router.post("/Iniciar/Sesion/Validar", (req, res) =>{
     const {correo, contra} = req.body;
-    console.log(process.env.BD_HOST)
-    console.log(process.env.BD_USER)
-    console.log(process.env.BD_PASS)
-    console.log(process.env.BD_NAME)
     var  mysqlConnection = conectar();
     const query = 'select * from MUsuario where email_usu = ? and contra_usu = ? and habilitada = 1';
     mysqlConnection.query(query, [correo, contra], (_error, _rowws, _fields) =>{
@@ -1064,7 +1060,7 @@ router.post('/Ranking/Mensual', (req, res)=>{
     const{clave, mes} = req.body;
     if(clave == claveadmin || clave == clavedoc){
         var mysqlConnection = conectar();
-        const query = 'select MUsuario.nom_usu, Puntos.cant_punt from EUsuario INNER JOIN MUsuario ON Eusuario.id_usu = MUsuario.id_usu INNER JOIN Puntos ON Puntos.id_usudoc = EUsuario.id_EnUsuario where Puntos.mes_punt = ? order by Puntos.cant_punt desc';
+        const query = 'select MUsuario.nom_usu, Puntos.cant_punt from EUsuario INNER JOIN MUsuario ON EUsuario.id_usu = MUsuario.id_usu INNER JOIN Puntos ON Puntos.id_usudoc = EUsuario.id_EnUsuario where Puntos.mes_punt = ? order by Puntos.cant_punt desc';
         mysqlConnection.query(query, [mes], (err, rows)=>{
             if(!err){
                 mysqlConnection.destroy();
