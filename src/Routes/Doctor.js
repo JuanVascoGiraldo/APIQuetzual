@@ -292,6 +292,7 @@ router.get('/Historico/Doctor/Rechazadas', (req, res)=>{
 
 router.post('/Ranking/Mensual', (req, res)=>{
     const{mes_punt} = req.body;
+    console.log(mes_punt)
     const token = req.headers["token"];
     if(!token){
         res.sendStatus(404);
@@ -304,12 +305,14 @@ router.post('/Ranking/Mensual', (req, res)=>{
             res.sendStatus(404);
         }
         if(seguirrr){
+            console.log("con token")
             const tokend = jwt.verify(token, config);
             if(tokend.id_rol == 2){
                 var mysqlConnection = conectar();
                 const query = 'select MUsuario.nom_usu, Puntos.cant_punt from EUsuario INNER JOIN MUsuario ON EUsuario.id_usu = MUsuario.id_usu INNER JOIN Puntos ON Puntos.id_usudoc = EUsuario.id_EnUsuario where Puntos.mes_punt = ? order by Puntos.cant_punt desc';
                 mysqlConnection.query(query, [mes_punt], (err, rows)=>{
                     if(!err){
+                        console.log(rows)
                         mysqlConnection.destroy();
                         res.json(rows);
                     }else{
